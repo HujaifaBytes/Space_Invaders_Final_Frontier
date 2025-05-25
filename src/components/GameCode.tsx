@@ -133,7 +133,7 @@ atexit.register(save_on_exit)`
     },
     {
       name: "Triloy Chakma",
-      title: "Game Logic & Enemy AI",
+      title: "Game Logic & UI Drawing Functions",
       code: `def reset_game_state():
     global player_x_change, player_y_change, score_value, lives, bullet_state, enemies, danger_level
     player_rect.centerx, player_rect.bottom = SCREEN_WIDTH // 2, SCREEN_HEIGHT - 60
@@ -160,11 +160,37 @@ def get_high_score():
             if row[2] is not None and isinstance(row[2], (int, float)) and row[2] > high_score:
                 high_score, high_scorer = row[2], row[0]
     except Exception: pass
-    return high_score, high_scorer`
+    return high_score, high_scorer
+
+def draw_text(text, font, color, surface, x, y, center=True):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect(center=(x, y)) if center else textobj.get_rect(topleft=(x, y))
+    surface.blit(textobj, textrect)
+
+def draw_button(rect, text, base_color, highlight_color, border_color=None):
+    mouse_pos = pygame.mouse.get_pos()
+    is_hovered = rect.collidepoint(mouse_pos)
+    color = highlight_color if is_hovered else base_color
+    
+    pygame.draw.rect(screen, color, rect, border_radius=10)
+    if border_color:
+        pygame.draw.rect(screen, border_color, rect, 2, border_radius=10)
+
+    draw_text(text, score_font, WHITE, screen, rect.centerx, rect.centery)
+    return is_hovered
+
+def show_game_ui():
+    draw_text(f"Score: {score_value}", score_font, WHITE, screen, 80, 25)
+    draw_text(f"DANGER LEVEL: {danger_level}", danger_font, GOLD, screen, SCREEN_WIDTH / 2, 25)
+    lives_text = " ".join(['❤️'] * lives); lives_display = emoji_font.render(lives_text, True, RED)
+    screen.blit(lives_display, (SCREEN_WIDTH - lives_display.get_width() - 80, 5))
+    draw_button(quit_button_rect, 'Quit', RED, (255, 50, 50))
+    pygame.draw.rect(screen, BLUE, pause_button_rect, border_radius=8)
+    draw_text("||", score_font, WHITE, screen, pause_button_rect.centerx, pause_button_rect.centery)`
     },
     {
       name: "Saif Siam",
-      title: "UI/UX Design & Music Selector",
+      title: "Home Screen & Music Selector Interface",
       code: `def home_screen():
     global user_name, user_gender, current_sensitivity_level, sound_enabled, selected_music_key
     
@@ -189,7 +215,95 @@ def get_high_score():
     music_panel_x, music_panel_y = 75, 450
     music_display_box = pygame.Rect(music_panel_x, music_panel_y, 250, 50)
     up_arrow_box = pygame.Rect(music_panel_x + 100, music_panel_y - 40, 50, 40)
-    down_arrow_box = pygame.Rect(music_panel_x + 100, music_panel_y + 50, 50, 40)`
+    down_arrow_box = pygame.Rect(music_panel_x + 100, music_panel_y + 50, 50, 40)
+
+    while True:
+        screen.blit(background_img, (0, 0))
+        draw_text("Space Invaders: Final Frontier", title_font, WHITE, screen, SCREEN_WIDTH / 2, 80)
+        draw_text(f"High Score: {high_score} by {high_scorer}", score_font, GOLD, screen, SCREEN_WIDTH/2, 160)
+        draw_text("Controls: WASD/Arrows | P-Pause | SPACE-Shoot", info_font, WHITE, screen, SCREEN_WIDTH/2, 210)
+        draw_text("Enter Your Name:", info_font, WHITE, screen, SCREEN_WIDTH/2, name_box.top - 18)
+
+        mouse_pos = pygame.mouse.get_pos()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: pygame.quit(); exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                name_active = name_box.collidepoint(event.pos)
+                if male_box.collidepoint(event.pos): user_gender = "Male"
+                elif female_box.collidepoint(event.pos): user_gender = "Female"
+                elif start_box.collidepoint(event.pos) and user_name and user_gender: return
+                elif quit_box.collidepoint(event.pos): pygame.quit(); exit()
+                
+                if sound_toggle_box.collidepoint(event.pos):
+                    sound_enabled = not sound_enabled
+                    if not sound_enabled: mixer.music.stop()
+                
+                if sensitivity_slider.collidepoint(event.pos):
+                    current_sensitivity_level = min(5, max(1, int(((event.pos[0] - sensitivity_slider.x) / sensitivity_slider.width) * 5) + 1))
+                
+                # ### NEW SECTION: Event logic for the new music selector ###
+                current_music_index = music_keys.index(selected_music_key)
+                
+                if up_arrow_box.collidepoint(event.pos):
+                    new_index = (current_music_index - 1) % len(music_keys)
+                    selected_music_key = music_keys[new_index]
+                    if sound_enabled:
+                        mixer.music.load(music_options[selected_music_key]); mixer.music.play(-1)
+
+                elif down_arrow_box.collidepoint(event.pos):
+                    new_index = (current_music_index + 1) % len(music_keys)
+                    selected_music_key = music_keys[new_index]
+                    if sound_enabled:
+                        mixer.music.load(music_options[selected_music_key]); mixer.music.play(-1)
+
+            if event.type == pygame.KEYDOWN and name_active:
+                if event.key == pygame.K_BACKSPACE:
+                    user_name = user_name[:-1]
+                else:
+                    user_name += event.unicode
+        
+        # --- Draw Central Buttons and Inputs ---
+        draw_button(start_box, 'START GAME', GREEN if user_name and user_gender else (50,50,50), (100,255,100))
+        draw_button(male_box, 'Male', BLUE if user_gender == "Male" else (50,50,50), (100,100,255))
+        draw_button(female_box, 'Female', (200,0,100) if user_gender == "Female" else (50,50,50), (255,100,180))
+        draw_button(quit_box, 'QUIT', RED, (255,50,50))
+
+        pygame.draw.rect(screen, pygame.Color('lightskyblue3') if name_active else WHITE, name_box, 2, border_radius=10)
+        draw_text(user_name, input_font, WHITE, screen, name_box.x + 10, name_box.centery-15, center=False)
+
+        # --- Draw Central Settings Area ---
+        draw_text("Game Settings", title_font, GOLD, screen, SCREEN_WIDTH/2, settings_y_start - 15)
+        
+        draw_text("Movement Sensitivity", info_font, WHITE, screen, SCREEN_WIDTH/2, sensitivity_slider.top - 15)
+        pygame.draw.rect(screen, WHITE, sensitivity_slider, 2, border_radius=10)
+        slider_fill_width = (current_sensitivity_level / 5) * sensitivity_slider.width
+        pygame.draw.rect(screen, GREEN, (sensitivity_slider.x, sensitivity_slider.y, slider_fill_width, sensitivity_slider.height), border_radius=10)
+        draw_button(sound_toggle_box, f"Sound: {'ON' if sound_enabled else 'OFF'}", GREEN if sound_enabled else RED, (100,255,100) if sound_enabled else (255,100,100))
+        
+        # ### NEW SECTION: Draw the left-side music selector ###
+        draw_text("Background Music", score_font, WHITE, screen, music_display_box.centerx, music_display_box.top - 70)
+        draw_button(up_arrow_box, "^", BLUE, (100, 100, 255))
+        pygame.draw.rect(screen, BLUE, music_display_box, border_radius=10)
+        draw_text(selected_music_key, info_font, WHITE, screen, music_display_box.centerx, music_display_box.centery)
+        draw_button(down_arrow_box, "v", BLUE, (100, 100, 255))
+
+        pygame.display.update()
+        clock.tick(FPS)
+
+def pause_screen():
+    global is_paused
+    if sound_enabled: mixer.music.pause()
+    while is_paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT: pygame.quit(); exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_u: is_paused = False
+            if event.type == pygame.MOUSEBUTTONDOWN and pause_button_rect.collidepoint(event.pos): is_paused = False
+
+        draw_text("PAUSED", game_over_font, GOLD, screen, SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 40)
+        draw_text("Press 'U' or click the pause icon to unpause", info_font, WHITE, screen, SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20)
+        pygame.display.update()
+        clock.tick(15)
+    if sound_enabled: mixer.music.unpause()`
     },
     {
       name: "Hujaifa Khan",
@@ -237,7 +351,58 @@ def get_high_score():
                 if event.key in (pygame.K_UP, pygame.K_w): player_y_change = -player_speed
                 if event.key in (pygame.K_DOWN, pygame.K_s): player_y_change = player_speed
                 if event.key == pygame.K_SPACE and bullet_state == "ready":
-                    play_sound(bullet_sound); bullet_state = "fire"; bullet_rect.center = player_rect.center`
+                    play_sound(bullet_sound); bullet_state = "fire"; bullet_rect.center = player_rect.center
+            if event.type == pygame.KEYUP:
+                if event.key in (pygame.K_LEFT, pygame.K_a, pygame.K_RIGHT, pygame.K_d): player_x_change = 0
+                if event.key in (pygame.K_UP, pygame.K_w, pygame.K_DOWN, pygame.K_s): player_y_change = 0
+
+        player_rect.x += player_x_change; player_rect.y += player_y_change
+        player_rect.clamp_ip(screen.get_rect())
+
+        for enemy in list(enemies):
+            current_enemy_speed = enemy_base_speed + (danger_level * 0.5)
+            if enemy['behavior'] == 'normal':
+                enemy['rect'].x += enemy['x_speed'] * current_enemy_speed
+                if enemy['rect'].left <= 0 or enemy['rect'].right >= SCREEN_WIDTH: enemy['x_speed'] *= -1; enemy['rect'].y += 30
+            elif enemy['behavior'] == 'diving':
+                enemy['rect'].y += current_enemy_speed * 1.5
+                if enemy['rect'].top > SCREEN_HEIGHT: enemies.remove(enemy); enemies.append(create_enemy())
+            if bullet_state == "fire" and enemy['rect'].colliderect(bullet_rect):
+                play_sound(explosion_sound); bullet_state = "ready"; score_value += 10
+                enemies.remove(enemy); enemies.append(create_enemy())
+            if player_rect.colliderect(enemy['rect']):
+                lives -= 1; enemies.remove(enemy); enemies.append(create_enemy())
+                if lives <= 0: save_to_excel("Game Over"); running = False
+
+        if bullet_state == "fire":
+            bullet_rect.y -= 15
+            if bullet_rect.bottom < 0: bullet_state = "ready"
+
+        screen.blit(player_img, player_rect)
+        for enemy in enemies: screen.blit(enemy_img, enemy['rect'])
+        if bullet_state == "fire": screen.blit(bullet_img, bullet_rect)
+        show_game_ui()
+        pygame.display.update()
+        clock.tick(FPS)
+
+    mixer.music.stop(); game_session_active = False
+
+    if lives <= 0:
+        waiting_for_input = True
+        while waiting_for_input:
+            screen.blit(background_img, (0, 0))
+            draw_text("GAME OVER", game_over_font, WHITE, screen, SCREEN_WIDTH/2, SCREEN_HEIGHT/2 - 50)
+            draw_text("Press ENTER to return to Home", score_font, WHITE, screen, SCREEN_WIDTH/2, SCREEN_HEIGHT/2 + 20)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT: pygame.quit(); exit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN: waiting_for_input = False
+            pygame.display.update()
+            clock.tick(15)
+
+if __name__ == "__main__":
+    while True:
+        home_screen()
+        game_loop()`
     }
   ];
 
