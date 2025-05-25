@@ -66,7 +66,7 @@ except Exception as e:
     exit()`
     },
     {
-      name: "Mishfikur Rahman Abir",
+      name: "Mushfikur Rahman Abir",
       title: "Font Management & UI Elements",
       code: `try:
     emoji_font = pygame.font.Font("C:/Windows/Fonts/seguiemj.ttf", 30)

@@ -43,7 +43,7 @@ const TeamMembers = () => {
       avatar: "📊"
     },
     {
-      name: "Mishfikur Rahman Abir",
+      name: "Mushfikur Rahman Abir",
       id: "20244103212",
       section: "06",
       intake: "54",
