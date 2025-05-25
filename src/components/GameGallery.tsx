@@ -22,7 +22,7 @@ const GameGallery = () => {
       description: 'Intense space battle with enemy formations and danger level indicators'
     },
     {
-      src: '/lovable-uploads/69b4f1d1-6b2e-49c3-a6d3-e6d690a95f95.png',
+      src: '/lovable-uploads/5f00f8bc-22b6-4525-89b0-34b2be3e87ca.png',
       title: 'Pause Screen',
       description: 'Game paused state with clear instructions for resuming gameplay'
     },
@@ -47,7 +47,7 @@ const GameGallery = () => {
       description: 'High-intensity gameplay with multiple enemy waves and threats'
     },
     {
-      src: '/lovable-uploads/695c66d2-3c6e-47f9-b061-1828af7a2fdf.png',
+      src: '/lovable-uploads/86c1ef88-d64b-4e0d-b9ef-8e4a50c0af57.png',
       title: 'Game Over Screen',
       description: 'End game state with instructions to return to the main menu'
     }
