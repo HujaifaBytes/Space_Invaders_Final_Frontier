@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const GameCode = () => {
@@ -67,7 +66,7 @@ except Exception as e:
     exit()`
     },
     {
-      name: "Abir Islam",
+      name: "Mishfikur Rahman Abir",
       title: "Font Management & UI Elements",
       code: `try:
     emoji_font = pygame.font.Font("C:/Windows/Fonts/seguiemj.ttf", 30)
@@ -104,7 +103,7 @@ game_session_active = False
 enemies, danger_level, enemy_base_speed = [], 1, 3.5`
     },
     {
-      name: "Nahiyan Pial",
+      name: "Nahian Pial",
       title: "Data Management & Excel Integration",
       code: `def save_to_excel(outcome):
     if not user_name: return # Do not save if no user is set
