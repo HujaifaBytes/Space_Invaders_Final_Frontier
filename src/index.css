@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,4 +99,227 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Space Background Animation */
+.stars,
+.twinkling {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.stars {
+  background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="20" cy="30" r="0.5" fill="white"/><circle cx="80" cy="60" r="0.3" fill="white"/><circle cx="150" cy="40" r="0.4" fill="white"/><circle cx="40" cy="100" r="0.2" fill="white"/><circle cx="120" cy="120" r="0.5" fill="white"/><circle cx="180" cy="90" r="0.3" fill="white"/><circle cx="30" cy="170" r="0.4" fill="white"/><circle cx="100" cy="180" r="0.2" fill="white"/><circle cx="170" cy="150" r="0.5" fill="white"/></svg>') repeat;
+  animation: move-stars 300s linear infinite;
+}
+
+.twinkling {
+  background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="60" cy="20" r="0.3" fill="cyan" opacity="0.8"/><circle cx="140" cy="80" r="0.2" fill="cyan" opacity="0.6"/><circle cx="20" cy="140" r="0.4" fill="cyan" opacity="0.7"/><circle cx="160" cy="160" r="0.3" fill="cyan" opacity="0.5"/></svg>') repeat;
+  animation: move-twinkling 200s linear infinite;
+}
+
+@keyframes move-stars {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-2000px); }
+}
+
+@keyframes move-twinkling {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-2000px); }
+}
+
+/* 3D Space Elements */
+.floating-spaceship {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 4rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.spaceship-body {
+  width: 40px;
+  height: 60px;
+  background: linear-gradient(135deg, #00ffff, #0080ff);
+  border-radius: 50% 50% 20% 20%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.spaceship-wing-left,
+.spaceship-wing-right {
+  width: 20px;
+  height: 30px;
+  background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+  border-radius: 20% 50% 50% 20%;
+  position: absolute;
+  top: 60%;
+}
+
+.spaceship-wing-left {
+  left: 10%;
+  transform: rotate(-15deg);
+}
+
+.spaceship-wing-right {
+  right: 10%;
+  transform: rotate(15deg);
+}
+
+.floating-enemies {
+  display: flex;
+  justify-content: space-around;
+  margin: 2rem 0;
+}
+
+.enemy-ship {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #ff4757, #ff6b7a);
+  border-radius: 50% 50% 20% 20%;
+  position: relative;
+  animation: enemyFloat 2s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(255, 71, 87, 0.5);
+}
+
+.enemy-1 { animation-delay: 0s; }
+.enemy-2 { animation-delay: 0.5s; }
+.enemy-3 { animation-delay: 1s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes enemyFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+/* Game Preview Container */
+.game-preview-container {
+  perspective: 1000px;
+  margin: 2rem 0;
+}
+
+.game-screen {
+  width: 100%;
+  max-width: 500px;
+  height: 350px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border: 3px solid #00ffff;
+  border-radius: 20px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+  transform: rotateX(5deg) rotateY(5deg);
+  animation: screenGlow 2s ease-in-out infinite alternate;
+}
+
+.screen-content {
+  padding: 20px;
+  height: 100%;
+  position: relative;
+}
+
+.game-ui {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: white;
+}
+
+.score-display {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.danger-level {
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.lives {
+  color: #ff6b7a;
+}
+
+.game-world {
+  position: relative;
+  height: 200px;
+}
+
+.player-ship {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, #00ffff, #0080ff);
+  border-radius: 50% 50% 20% 20%;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: playerPulse 1s ease-in-out infinite alternate;
+}
+
+.enemy-formation {
+  display: flex;
+  justify-content: space-around;
+  position: absolute;
+  top: 20px;
+  width: 100%;
+}
+
+.enemy {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #ff4757, #ff6b7a);
+  border-radius: 50% 50% 20% 20%;
+  animation: enemyMove 2s ease-in-out infinite;
+}
+
+@keyframes screenGlow {
+  0% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.3); }
+  100% { box-shadow: 0 0 50px rgba(0, 255, 255, 0.6); }
+}
+
+@keyframes playerPulse {
+  0% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.5); }
+  100% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.8); }
+}
+
+@keyframes enemyMove {
+  0%, 100% { transform: translateX(0px); }
+  50% { transform: translateX(10px); }
+}
+
+/* Smooth scrolling for code blocks */
+pre {
+  scrollbar-width: thin;
+  scrollbar-color: #00ffff #1a1a2e;
+}
+
+pre::-webkit-scrollbar {
+  width: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: #1a1a2e;
+  border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: #00ffff;
+  border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+  background: #00cccc;
 }
