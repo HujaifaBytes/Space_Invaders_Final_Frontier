@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 const TeamMembers = () => {
@@ -33,7 +34,7 @@ const TeamMembers = () => {
       avatar: "🤖"
     },
     {
-      name: "Nahiyan Pial",
+      name: "Nahian Pial",
       id: "20244103216",
       section: "06",
       intake: "54",
@@ -43,7 +44,7 @@ const TeamMembers = () => {
       avatar: "📊"
     },
     {
-      name: "Abir Islam",
+      name: "Mishfikur Rahman Abir",
       id: "20244103212",
       section: "06",
       intake: "54",
