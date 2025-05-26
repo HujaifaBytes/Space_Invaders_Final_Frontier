@@ -22,7 +22,15 @@ const App = () => {
         // Show alert if right-clicked more than once
         if (newCount >= 2) {
           const alertBox = document.getElementById('custom-alert');
-          if (alertBox) alertBox.style.display = 'block';
+          if (alertBox) {
+            alertBox.style.display = 'block';
+            
+            // Auto-hide after 3 seconds and reset counter
+            setTimeout(() => {
+              alertBox.style.display = 'none';
+              setRightClickCount(0); // Reset counter so alert can show again
+            }, 3000);
+          }
         }
 
         return newCount;
@@ -69,20 +77,24 @@ const App = () => {
           style={{
             display: 'none',
             position: 'fixed',
-            bottom: '20px',
+            top: '50%',
             left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: '#ffecec',
-            border: '1px solid #ff5e5e',
-            padding: '15px',
-            borderRadius: '10px',
-            boxShadow: '0 0 20px rgba(255, 0, 0, 0.3)',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: '#fff5f5',
+            border: '2px solid #fecaca',
+            padding: '20px 30px',
+            borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
             zIndex: 9999,
-            color: '#ff0000',
-            fontWeight: 'bold',
+            color: '#dc2626',
+            fontWeight: '600',
+            fontSize: '16px',
+            minWidth: '300px',
+            textAlign: 'center',
           }}
         >
-          ⚠️ ALERT: contact.hujaifakhanmdrohid4004@gmail.com
+          ⚠️ ALERT: <br />
+          contact.sayedjohon@gmail.com
         </div>
 
         <BrowserRouter>
