@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, Trophy, Target, Zap, BarChart3, FileSpreadsheet, Rocket, Shield, Gamepad2 } from 'lucide-react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
@@ -7,6 +6,33 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const robotRef = useRef<HTMLDivElement>(null);
+
+  // Mouse tracking for robot
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Robot rotation based on mouse position
+  useEffect(() => {
+    if (robotRef.current) {
+      const robot = robotRef.current;
+      const rect = robot.getBoundingClientRect();
+      const robotCenterX = rect.left + rect.width / 2;
+      const robotCenterY = rect.top + rect.height / 2;
+      
+      const angle = Math.atan2(mousePosition.y - robotCenterY, mousePosition.x - robotCenterX);
+      const rotation = (angle * 180) / Math.PI;
+      
+      robot.style.transform = `rotate(${rotation + 90}deg)`;
+    }
+  }, [mousePosition]);
 
   // Chart data
   const difficultyData = [
@@ -41,7 +67,58 @@ const Home = () => {
   ];
 
   return (
-    <div className="pt-24 pb-12 px-6">
+    <div className="pt-24 pb-12 px-6 relative cursor-none">
+      {/* Custom Cursor */}
+      <div 
+        className="fixed w-4 h-4 bg-cyan-400 rounded-full pointer-events-none z-50 mix-blend-difference transition-transform duration-100"
+        style={{
+          left: mousePosition.x - 8,
+          top: mousePosition.y - 8,
+          transform: 'scale(1.5)',
+        }}
+      />
+      
+      {/* Cursor Trail Effect */}
+      <div 
+        className="fixed w-8 h-8 border-2 border-cyan-400/50 rounded-full pointer-events-none z-40 transition-all duration-300"
+        style={{
+          left: mousePosition.x - 16,
+          top: mousePosition.y - 16,
+        }}
+      />
+
+      {/* 3D Robot */}
+      <div className="fixed top-1/2 right-10 z-30 pointer-events-none">
+        <div 
+          ref={robotRef}
+          className="robot-container transition-transform duration-200 ease-out"
+          style={{ transformOrigin: 'center center' }}
+        >
+          <div className="relative w-16 h-20">
+            {/* Robot Head */}
+            <div className="w-12 h-12 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-lg mx-auto mb-2 relative border-2 border-cyan-300 shadow-lg shadow-cyan-400/50">
+              {/* Eyes */}
+              <div className="absolute top-3 left-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              <div className="absolute top-3 right-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              {/* Antenna */}
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-1 h-3 bg-cyan-300"></div>
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+            </div>
+            
+            {/* Robot Body */}
+            <div className="w-10 h-12 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-md mx-auto relative border-2 border-blue-400 shadow-lg shadow-blue-400/50">
+              {/* Chest Panel */}
+              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-6 h-2 bg-cyan-300 rounded"></div>
+              <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-green-400 rounded border border-green-300"></div>
+            </div>
+            
+            {/* Arms */}
+            <div className="absolute top-14 -left-2 w-3 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded border border-blue-400"></div>
+            <div className="absolute top-14 -right-2 w-3 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded border border-blue-400"></div>
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto max-w-7xl">
         {/* Hero Section */}
         <div className="text-center mb-16">
@@ -64,7 +141,7 @@ const Home = () => {
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 ${
+                className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 ${
                   activeTab === id 
                     ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' 
                     : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-transparent'
@@ -95,6 +172,59 @@ const Home = () => {
               </div>
             </div>
 
+            {/* Project at a Glance */}
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-cyan-400 mb-12">Project at a Glance</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-xl p-8 border-2 border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300 hover:scale-105">
+                  <h3 className="text-4xl font-bold text-cyan-400 mb-2">Python 3</h3>
+                  <p className="text-gray-300">Core Language</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl p-8 border-2 border-purple-500/30 hover:border-purple-400/60 transition-all duration-300 hover:scale-105">
+                  <h3 className="text-4xl font-bold text-purple-400 mb-2">Pygame</h3>
+                  <p className="text-gray-300">Core Library</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-xl p-8 border-2 border-orange-500/30 hover:border-orange-400/60 transition-all duration-300 hover:scale-105">
+                  <h3 className="text-4xl font-bold text-orange-400 mb-2">15+</h3>
+                  <p className="text-gray-300">Major Features</p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl p-8 border-2 border-green-500/30 hover:border-green-400/60 transition-all duration-300 hover:scale-105">
+                  <h3 className="text-4xl font-bold text-green-400 mb-2">Excel</h3>
+                  <p className="text-gray-300">Data Persistence</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Core Technology Stack */}
+            <div className="mb-16">
+              <h2 className="text-4xl font-bold text-cyan-400 mb-12 text-center">Core Technology Stack</h2>
+              <div className="grid md:grid-cols-3 gap-8">
+                <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-xl p-8 border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300 hover:scale-105">
+                  <h3 className="text-2xl font-bold text-cyan-400 mb-4">Python</h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    The entire game logic, state management, and data processing is built on Python 3.
+                  </p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-8 border border-purple-500/30 hover:border-purple-400/60 transition-all duration-300 hover:scale-105">
+                  <h3 className="text-2xl font-bold text-purple-400 mb-4">Pygame</h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    Pygame serves as the core library for graphics, input, sound, and game loops.
+                  </p>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-xl p-8 border border-green-500/30 hover:border-green-400/60 transition-all duration-300 hover:scale-105">
+                  <h3 className="text-2xl font-bold text-green-400 mb-4">OpenPyXL</h3>
+                  <p className="text-gray-300 leading-relaxed">
+                    This library enables robust data persistence, saving results to Excel files.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Project Description */}
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
@@ -112,7 +242,7 @@ const Home = () => {
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 mt-8">
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-500/30">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300">
                     <h3 className="text-cyan-400 font-semibold mb-2">Technology Stack</h3>
                     <ul className="text-sm text-gray-300 space-y-1">
                       <li>• Python 3.x</li>
@@ -122,7 +252,7 @@ const Home = () => {
                     </ul>
                   </div>
                   
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-500/30">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-cyan-500/30 hover:border-cyan-400/60 transition-all duration-300">
                     <h3 className="text-cyan-400 font-semibold mb-2">Key Features</h3>
                     <ul className="text-sm text-gray-300 space-y-1">
                       <li>• Dynamic Difficulty</li>
@@ -202,7 +332,7 @@ const Home = () => {
                 }
               ].map((phase, index) => (
                 <div key={index} className="group relative">
-                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-cyan-400/50 transition-all duration-300 h-full">
+                  <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-cyan-400/50 transition-all duration-300 h-full hover:scale-105">
                     <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${phase.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
                       <phase.icon className="w-8 h-8 text-white" />
                     </div>
@@ -216,7 +346,7 @@ const Home = () => {
 
             {/* Game Features Grid */}
             <div className="grid md:grid-cols-3 gap-8 mt-16">
-              <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-xl p-8 border border-cyan-500/30">
+              <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 rounded-xl p-8 border border-cyan-500/30 hover:scale-105 transition-all duration-300">
                 <Shield className="w-12 h-12 text-cyan-400 mb-4" />
                 <h3 className="text-2xl font-bold text-white mb-4">Advanced Defense</h3>
                 <p className="text-gray-300">
@@ -224,7 +354,7 @@ const Home = () => {
                 </p>
               </div>
               
-              <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-8 border border-purple-500/30">
+              <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-xl p-8 border border-purple-500/30 hover:scale-105 transition-all duration-300">
                 <Zap className="w-12 h-12 text-purple-400 mb-4" />
                 <h3 className="text-2xl font-bold text-white mb-4">Dynamic Scaling</h3>
                 <p className="text-gray-300">
@@ -232,7 +362,7 @@ const Home = () => {
                 </p>
               </div>
               
-              <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl p-8 border border-orange-500/30">
+              <div className="bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-xl p-8 border border-orange-500/30 hover:scale-105 transition-all duration-300">
                 <BarChart3 className="w-12 h-12 text-orange-400 mb-4" />
                 <h3 className="text-2xl font-bold text-white mb-4">Performance Analytics</h3>
                 <p className="text-gray-300">
@@ -255,7 +385,7 @@ const Home = () => {
             {/* Charts Grid */}
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Difficulty Progression Chart */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-cyan-500/30">
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-cyan-500/30 hover:scale-105 transition-all duration-300">
                 <h3 className="text-xl font-bold text-white mb-4">Difficulty Progression</h3>
                 <ChartContainer config={{
                   enemies: { label: "Enemies", color: "#00ffff" },
@@ -275,7 +405,7 @@ const Home = () => {
               </div>
 
               {/* Performance Trends */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30">
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30 hover:scale-105 transition-all duration-300">
                 <h3 className="text-xl font-bold text-white mb-4">Performance Trends</h3>
                 <ChartContainer config={{
                   score: { label: "Score", color: "#9d4edd" },
@@ -294,7 +424,7 @@ const Home = () => {
               </div>
 
               {/* Game Statistics Pie Chart */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30">
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30 hover:scale-105 transition-all duration-300">
                 <h3 className="text-xl font-bold text-white mb-4">Game Statistics</h3>
                 <ChartContainer config={{
                   hits: { label: "Hits", color: "#00ffff" },
@@ -324,22 +454,22 @@ const Home = () => {
               </div>
 
               {/* Real-time Metrics */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-green-500/30">
+              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-green-500/30 hover:scale-105 transition-all duration-300">
                 <h3 className="text-xl font-bold text-white mb-4">Real-time Metrics</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-cyan-500/10 rounded-lg p-4 text-center">
+                  <div className="bg-cyan-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
                     <div className="text-3xl font-bold text-cyan-400">15,420</div>
                     <div className="text-sm text-gray-300">Highest Score</div>
                   </div>
-                  <div className="bg-purple-500/10 rounded-lg p-4 text-center">
+                  <div className="bg-purple-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
                     <div className="text-3xl font-bold text-purple-400">96%</div>
                     <div className="text-sm text-gray-300">Best Accuracy</div>
                   </div>
-                  <div className="bg-orange-500/10 rounded-lg p-4 text-center">
+                  <div className="bg-orange-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
                     <div className="text-3xl font-bold text-orange-400">12</div>
                     <div className="text-sm text-gray-300">Max Level</div>
                   </div>
-                  <div className="bg-green-500/10 rounded-lg p-4 text-center">
+                  <div className="bg-green-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
                     <div className="text-3xl font-bold text-green-400">3:15</div>
                     <div className="text-sm text-gray-300">Best Time</div>
                   </div>
@@ -359,7 +489,7 @@ const Home = () => {
             </div>
 
             {/* Excel Demo Interface */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/30 overflow-hidden">
+            <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-cyan-500/30 overflow-hidden hover:scale-[1.02] transition-all duration-300">
               <div className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 p-4 border-b border-white/10">
                 <div className="flex items-center space-x-4">
                   <FileSpreadsheet className="w-6 h-6 text-cyan-400" />
@@ -376,10 +506,10 @@ const Home = () => {
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-lg font-semibold text-white">Sheet: Player Performance Data</h3>
                   <div className="flex space-x-2">
-                    <button className="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg text-sm hover:bg-cyan-500/30 transition-colors">
+                    <button className="px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg text-sm hover:bg-cyan-500/30 transition-colors hover:scale-105">
                       Export Data
                     </button>
-                    <button className="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-sm hover:bg-purple-500/30 transition-colors">
+                    <button className="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg text-sm hover:bg-purple-500/30 transition-colors hover:scale-105">
                       Generate Report
                     </button>
                   </div>
@@ -399,7 +529,7 @@ const Home = () => {
                     </TableHeader>
                     <TableBody>
                       {playerStatsData.map((player, index) => (
-                        <TableRow key={index} className="border-white/10 hover:bg-white/5">
+                        <TableRow key={index} className="border-white/10 hover:bg-white/5 transition-colors">
                           <TableCell className="text-white font-mono">{player.player}</TableCell>
                           <TableCell className="text-cyan-400 font-bold">{player.score.toLocaleString()}</TableCell>
                           <TableCell className="text-purple-400">{player.level}</TableCell>
@@ -413,7 +543,7 @@ const Home = () => {
                 </div>
 
                 <div className="mt-6 grid md:grid-cols-3 gap-4">
-                  <div className="bg-cyan-500/10 rounded-lg p-4">
+                  <div className="bg-cyan-500/10 rounded-lg p-4 hover:scale-105 transition-all duration-300">
                     <h4 className="text-cyan-400 font-semibold mb-2">Data Export Features</h4>
                     <ul className="text-sm text-gray-300 space-y-1">
                       <li>• Real-time score tracking</li>
@@ -423,7 +553,7 @@ const Home = () => {
                     </ul>
                   </div>
 
-                  <div className="bg-purple-500/10 rounded-lg p-4">
+                  <div className="bg-purple-500/10 rounded-lg p-4 hover:scale-105 transition-all duration-300">
                     <h4 className="text-purple-400 font-semibold mb-2">Analytics Integration</h4>
                     <ul className="text-sm text-gray-300 space-y-1">
                       <li>• OpenPyXL library integration</li>
@@ -433,7 +563,7 @@ const Home = () => {
                     </ul>
                   </div>
 
-                  <div className="bg-orange-500/10 rounded-lg p-4">
+                  <div className="bg-orange-500/10 rounded-lg p-4 hover:scale-105 transition-all duration-300">
                     <h4 className="text-orange-400 font-semibold mb-2">Future Enhancements</h4>
                     <ul className="text-sm text-gray-300 space-y-1">
                       <li>• Cloud data synchronization</li>

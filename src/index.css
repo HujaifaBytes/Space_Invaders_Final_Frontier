@@ -98,6 +98,7 @@
 
   body {
     @apply bg-background text-foreground;
+    cursor: none;
   }
 }
 
@@ -129,6 +130,54 @@
 @keyframes move-twinkling {
   from { transform: translateY(0px); }
   to { transform: translateY(-2000px); }
+}
+
+/* Cursor Effects */
+.cursor-none {
+  cursor: none;
+}
+
+/* Custom Cursor Trail */
+@keyframes cursor-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.6);
+  }
+}
+
+/* Robot Styles */
+.robot-container {
+  filter: drop-shadow(0 4px 8px rgba(0, 255, 255, 0.3));
+  animation: robot-idle 3s ease-in-out infinite;
+}
+
+@keyframes robot-idle {
+  0%, 100% { 
+    transform: translateY(0px);
+    filter: drop-shadow(0 4px 8px rgba(0, 255, 255, 0.3));
+  }
+  50% { 
+    transform: translateY(-5px);
+    filter: drop-shadow(0 8px 16px rgba(0, 255, 255, 0.4));
+  }
+}
+
+/* Enhanced Robot Eyes Animation */
+.robot-container .w-2.h-2.bg-white {
+  animation: robot-blink 4s infinite;
+}
+
+@keyframes robot-blink {
+  0%, 90%, 100% { 
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  95% { 
+    transform: scaleY(0.1);
+    opacity: 0.8;
+  }
 }
 
 /* 3D Space Elements */
@@ -300,6 +349,12 @@
   50% { transform: translateX(10px); }
 }
 
+/* Enhanced Hover Effects */
+.hover\:scale-105:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
 /* Smooth scrolling for code blocks */
 pre {
   scrollbar-width: thin;
@@ -322,4 +377,31 @@ pre::-webkit-scrollbar-thumb {
 
 pre::-webkit-scrollbar-thumb:hover {
   background: #00cccc;
+}
+
+/* Particle effects for cursor */
+@keyframes particle-float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Enhanced interactive elements */
+button:hover,
+.hover\:scale-105:hover {
+  animation: hover-glow 0.3s ease-in-out;
+}
+
+@keyframes hover-glow {
+  0% { 
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+  }
+  100% { 
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.6), 0 0 25px rgba(0, 255, 255, 0.4);
+  }
 }
