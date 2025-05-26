@@ -94,7 +94,7 @@ const App = () => {
           }}
         >
           ⚠️ ALERT: <br />
-          contact.sayedjohon@gmail.com
+          contact.huaifakhanmdrohid4004@gmail.com
         </div>
 
         <BrowserRouter>
