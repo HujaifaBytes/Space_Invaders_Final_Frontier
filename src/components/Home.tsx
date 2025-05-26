@@ -67,26 +67,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="pt-24 pb-12 px-6 relative cursor-none">
-      {/* Custom Cursor */}
-      <div 
-        className="fixed w-4 h-4 bg-cyan-400 rounded-full pointer-events-none z-50 mix-blend-difference transition-transform duration-100"
-        style={{
-          left: mousePosition.x - 8,
-          top: mousePosition.y - 8,
-          transform: 'scale(1.5)',
-        }}
-      />
-      
-      {/* Cursor Trail Effect */}
-      <div 
-        className="fixed w-8 h-8 border-2 border-cyan-400/50 rounded-full pointer-events-none z-40 transition-all duration-300"
-        style={{
-          left: mousePosition.x - 16,
-          top: mousePosition.y - 16,
-        }}
-      />
-
+    <div className="pt-24 pb-12 px-6 relative">
       {/* 3D Robot */}
       <div className="fixed top-1/2 right-10 z-30 pointer-events-none">
         <div 
@@ -94,28 +75,26 @@ const Home = () => {
           className="robot-container transition-transform duration-200 ease-out"
           style={{ transformOrigin: 'center center' }}
         >
-          <div className="relative w-16 h-20">
-            {/* Robot Head */}
-            <div className="w-12 h-12 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-lg mx-auto mb-2 relative border-2 border-cyan-300 shadow-lg shadow-cyan-400/50">
-              {/* Eyes */}
-              <div className="absolute top-3 left-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <div className="absolute top-3 right-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              {/* Antenna */}
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-1 h-3 bg-cyan-300"></div>
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
-            </div>
-            
-            {/* Robot Body */}
-            <div className="w-10 h-12 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-md mx-auto relative border-2 border-blue-400 shadow-lg shadow-blue-400/50">
-              {/* Chest Panel */}
-              <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-6 h-2 bg-cyan-300 rounded"></div>
-              <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-green-400 rounded border border-green-300"></div>
-            </div>
-            
-            {/* Arms */}
-            <div className="absolute top-14 -left-2 w-3 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded border border-blue-400"></div>
-            <div className="absolute top-14 -right-2 w-3 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded border border-blue-400"></div>
+          {/* Robot Head */}
+          <div className="w-12 h-12 bg-gradient-to-b from-cyan-400 to-blue-500 rounded-lg mx-auto mb-2 relative border-2 border-cyan-300 shadow-lg shadow-cyan-400/50">
+            {/* Eyes */}
+            <div className="absolute top-3 left-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <div className="absolute top-3 right-2 w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            {/* Antenna */}
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-1 h-3 bg-cyan-300"></div>
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
           </div>
+          
+          {/* Robot Body */}
+          <div className="w-10 h-12 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-md mx-auto relative border-2 border-blue-400 shadow-lg shadow-blue-400/50">
+            {/* Chest Panel */}
+            <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-6 h-2 bg-cyan-300 rounded"></div>
+            <div className="absolute top-5 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-green-400 rounded border border-green-300"></div>
+          </div>
+          
+          {/* Arms */}
+          <div className="absolute top-14 -left-2 w-3 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded border border-blue-400"></div>
+          <div className="absolute top-14 -right-2 w-3 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded border border-blue-400"></div>
         </div>
       </div>
 
