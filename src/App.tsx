@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,7 +15,7 @@ const App = () => {
   const [rightClickCount, setRightClickCount] = useState(0);
 
   useEffect(() => {
-    const handleContextMenu = (e) => {
+    const handleContextMenu = (e: Event) => {
       e.preventDefault(); // block default right-click
       setRightClickCount((prev) => {
         const newCount = prev + 1;
@@ -38,7 +39,7 @@ const App = () => {
     };
 
     // Disable F12, Ctrl+Shift+I, Ctrl+U, and other developer tools shortcuts
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       // Disable F12
       if (e.keyCode === 123) {
         e.preventDefault();
