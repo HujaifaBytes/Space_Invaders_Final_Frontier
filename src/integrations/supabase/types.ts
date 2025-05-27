@@ -126,56 +126,6 @@ export type Database = {
         }
         Relationships: []
       }
-      videos: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          duration: number | null
-          file_path: string
-          file_size: number | null
-          id: string
-          mime_type: string
-          thumbnail_url: string | null
-          title: string
-          updated_at: string | null
-          uploaded_by: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          duration?: number | null
-          file_path: string
-          file_size?: number | null
-          id?: string
-          mime_type: string
-          thumbnail_url?: string | null
-          title: string
-          updated_at?: string | null
-          uploaded_by?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          duration?: number | null
-          file_path?: string
-          file_size?: number | null
-          id?: string
-          mime_type?: string
-          thumbnail_url?: string | null
-          title?: string
-          updated_at?: string | null
-          uploaded_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "videos_uploaded_by_fkey"
-            columns: ["uploaded_by"]
-            isOneToOne: false
-            referencedRelation: "admins"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
