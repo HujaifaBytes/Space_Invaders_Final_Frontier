@@ -1,3 +1,4 @@
+// src/App.tsx
 
 import React, { useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
@@ -12,97 +13,86 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [rightClickCount, setRightClickCount] = useState(0);
+  // NEW: State to control the visibility of the custom alert
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
 
   useEffect(() => {
-    const handleContextMenu = (e: Event) => {
+    const handleContextMenu = (e: MouseEvent) => {
       e.preventDefault(); // block default right-click
-      setRightClickCount((prev) => {
-        const newCount = prev + 1;
+      setIsAlertVisible(true); // Show the alert using state
 
-        // Show alert if right-clicked more than once
-        if (newCount >= 2) {
-          const alertBox = document.getElementById('custom-alert');
-          if (alertBox) {
-            alertBox.style.display = 'block';
-            
-            // Auto-hide after 3 seconds and reset counter
-            setTimeout(() => {
-              alertBox.style.display = 'none';
-              setRightClickCount(0); // Reset counter so alert can show again
-            }, 3000);
-          }
-        }
-
-        return newCount;
-      });
+      // Set a timer to hide the alert after 3 seconds
+      setTimeout(() => {
+        setIsAlertVisible(false);
+      }, 3000);
     };
 
-    // Disable F12, Ctrl+Shift+I, Ctrl+U, and other developer tools shortcuts
+    // Use modern `e.key` instead of deprecated `e.keyCode`
     const handleKeyDown = (e: KeyboardEvent) => {
       // Disable F12
-      if (e.keyCode === 123) {
+      if (e.key === 'F12') {
         e.preventDefault();
-        return false;
       }
-      // Disable Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-      if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) {
+      // Disable Ctrl+Shift+I, Ctrl+Shift+J
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) {
         e.preventDefault();
-        return false;
       }
       // Disable Ctrl+U
-      if (e.ctrlKey && e.keyCode === 85) {
+      if (e.ctrlKey && e.key === 'U') {
         e.preventDefault();
-        return false;
       }
     };
 
+    // Add event listeners
     document.addEventListener('contextmenu', handleContextMenu);
     document.addEventListener('keydown', handleKeyDown);
 
+    // Cleanup function to remove listeners when the component unmounts
     return () => {
       document.removeEventListener('contextmenu', handleContextMenu);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, []); // Empty array ensures this runs only once
 
   return (
     <QueryClientProvider client={queryClient}>
       <AdminProvider>
         <TooltipProvider>
+          {/* Moved Toasters to be direct children of a provider */}
           <Toaster />
           <Sonner />
-          
-          {/* Custom Alert Box */}
-          <div
-            id="custom-alert"
-            style={{
-              display: 'none',
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              backgroundColor: '#fff5f5',
-              border: '2px solid #fecaca',
-              padding: '20px 30px',
-              borderRadius: '12px',
-              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
-              zIndex: 9999,
-              color: '#dc2626',
-              fontWeight: '600',
-              fontSize: '16px',
-              minWidth: '300px',
-              textAlign: 'center',
-            }}
-          >
-            ⚠️ ALERT: <br />
-            contact.huaifakhanmdrohid4004@gmail.com
-          </div>
+
+          {/* Conditionally render the Custom Alert Box based on state.
+            This is the "React Way".
+          */}
+          {isAlertVisible && (
+            <div
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: '#fff5f5',
+                border: '2px solid #fecaca',
+                padding: '20px 30px',
+                borderRadius: '12px',
+                boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
+                zIndex: 9999,
+                color: '#dc2626',
+                fontWeight: '600',
+                fontSize: '16px',
+                minWidth: '300px',
+                textAlign: 'center',
+              }}
+            >
+              ⚠️ ALERT: <br />
+              contact.huaifakhanmdrohid4004@gmail.com
+            </div>
+          )}
 
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
