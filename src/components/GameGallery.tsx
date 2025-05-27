@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -138,6 +137,36 @@ const GameGallery = () => {
               )}
             </button>
           ))}
+        </div>
+        {/* Game Video Section */}
+        <div className="mt-20 container mx-auto max-w-4xl">
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-cyan-500/30 p-8 shadow-lg">
+            <h2 className="text-4xl font-bold text-center text-white mb-4 tracking-wider">
+              Game <span className="text-cyan-400">Video</span>
+            </h2>
+            <p className="text-center text-gray-300 mb-8 text-lg">
+              Watch a gameplay video demonstration below!
+            </p>
+            <div className="aspect-video rounded-lg overflow-hidden border border-cyan-400 shadow-lg bg-black flex items-center justify-center">
+              <iframe
+                src="https://drive.google.com/file/d/1yCJhU97OKW-MVCAEpBdcCmkxdvD52neE/preview"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="w-full h-full"
+                title="Game Video"
+              ></iframe>
+            </div>
+            <div className="text-center mt-4">
+              <a
+                href="https://photos.app.goo.gl/HnXFhH4zVFEvBiTF6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-2 text-cyan-400 hover:underline"
+              >
+                Or watch on Google Photos
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
