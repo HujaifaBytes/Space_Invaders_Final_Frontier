@@ -1,10 +1,11 @@
+// src/contexts/AdminContext.tsx
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AdminContextType {
   isAdminLoggedIn: boolean;
-  adminData: any;
+  adminData: any; // Consider defining a more specific type for adminData based on your 'admins' table
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
@@ -26,7 +27,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if admin is already logged in (from localStorage)
     const adminSession = localStorage.getItem('admin_session');
     if (adminSession) {
       try {
@@ -34,32 +34,69 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setAdminData(admin);
         setIsAdminLoggedIn(true);
       } catch (error) {
+        console.error("Error parsing admin session from localStorage:", error);
         localStorage.removeItem('admin_session');
       }
     }
     setLoading(false);
   }, []);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
-    try {
-      // From src/contexts/AdminContext.tsx
-          const { data, error } = await supabase
-            .from('admins')
-            .select('*')
-            .eq('username', username) // Must be an exact match for 'Hello'
-            .eq('password', password) // Must be an exact match for 'Jackson.com@312'
-            .single();
+  const login = async (username_input: string, password_input: string): Promise<boolean> => {
+    const username = username_input.trim(); // Trim whitespace from username input
+    const password = password_input; // Password is kept as is for exact matching
 
-      if (error || !data) { // If error or no data, it means no exact match was found
+    console.log(`Attempting login for username: "${username}" with password: "${password}"`);
+
+    try {
+      const { data, error } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('username', username)
+        .eq('password', password); // Temporarily removed .single() for detailed debugging
+
+      // Log the raw response from Supabase
+      console.log('Supabase login query response:', { data, error });
+
+      if (error) {
+        console.error('Supabase error during login query:', error.message, error.details, error.hint);
         return false;
       }
 
-      setAdminData(data);
+      if (!data || data.length === 0) {
+        console.log('No admin found with the provided credentials.');
+        return false;
+      }
+
+      if (data.length > 1) {
+        console.warn('Multiple admins found with the same credentials. This should not happen if usernames are unique. Using the first match.');
+        // You might want to return false here for security if duplicates are not expected.
+        // For now, we'll proceed with the first match to see if login can succeed.
+      }
+
+      const adminUser = data[0]; // Get the first matching user
+
+      setAdminData(adminUser);
       setIsAdminLoggedIn(true);
-      localStorage.setItem('admin_session', JSON.stringify(data));
+      localStorage.setItem('admin_session', JSON.stringify(adminUser));
+      console.log('Login successful for:', adminUser.username);
       return true;
-    } catch (error) {
-      console.error('Login error:', error);
+
+    } catch (catchError: any) {
+      console.error('Login function caught an unexpected error:', catchError.message, catchError);
       return false;
     }
   };
+
+  const logout = () => {
+    setIsAdminLoggedIn(false);
+    setAdminData(null);
+    localStorage.removeItem('admin_session');
+    console.log('Admin logged out.');
+  };
+
+  return (
+    <AdminContext.Provider value={{ isAdminLoggedIn, adminData, login, logout, loading }}>
+      {children}
+    </AdminContext.Provider>
+  );
+};
