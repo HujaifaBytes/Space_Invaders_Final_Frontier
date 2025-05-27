@@ -1,9 +1,16 @@
 
-import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAdmin } from '@/contexts/AdminContext';
+import VideoUpload from './VideoUpload';
+import VideoPlayer from './VideoPlayer';
 
 const GameGallery = () => {
+  const { isAdminLoggedIn } = useAdmin();
   const [currentImage, setCurrentImage] = useState(0);
+  const [videos, setVideos] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState<any>(null);
   
   const gameImages = [
     {
@@ -53,13 +60,43 @@ const GameGallery = () => {
     }
   ];
 
+  const fetchVideos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('videos')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching videos:', error);
+        return;
+      }
+
+      setVideos(data || []);
+    } catch (error) {
+      console.error('Error fetching videos:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchVideos();
+  }, []);
+
+  const allMedia = [...gameImages, ...videos.map(video => ({
+    ...video,
+    src: video.file_path,
+    isVideo: true
+  }))];
+
   const nextImage = () => {
-    setCurrentImage((prev) => (prev + 1) % gameImages.length);
+    setCurrentImage((prev) => (prev + 1) % allMedia.length);
   };
 
   const prevImage = () => {
-    setCurrentImage((prev) => (prev - 1 + gameImages.length) % gameImages.length);
+    setCurrentImage((prev) => (prev - 1 + allMedia.length) % allMedia.length);
   };
+
+  const currentMedia = allMedia[currentImage];
 
   return (
     <div className="pt-24 pb-12 px-6">
@@ -69,19 +106,43 @@ const GameGallery = () => {
             Game <span className="text-cyan-400">Gallery</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Explore screenshots from our Space Invaders gameplay experience
+            Explore screenshots and videos from our Space Invaders gameplay experience
           </p>
         </div>
+
+        {/* Admin Upload Section */}
+        {isAdminLoggedIn && (
+          <VideoUpload onVideoUploaded={fetchVideos} />
+        )}
 
         {/* Main Gallery */}
         <div className="relative mb-8">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-cyan-500/30 overflow-hidden">
             <div className="relative aspect-video">
-              <img
-                src={gameImages[currentImage].src}
-                alt={gameImages[currentImage].title}
-                className="w-full h-full object-contain bg-black"
-              />
+              {currentMedia?.isVideo ? (
+                <div className="relative w-full h-full bg-black flex items-center justify-center">
+                  <video
+                    src={currentMedia.src}
+                    className="w-full h-full object-contain"
+                    poster=""
+                    preload="metadata"
+                  />
+                  <button
+                    onClick={() => setSelectedVideo(currentMedia)}
+                    className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all duration-300 group"
+                  >
+                    <div className="bg-cyan-500 rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
+                      <Play size={32} className="text-white ml-1" />
+                    </div>
+                  </button>
+                </div>
+              ) : (
+                <img
+                  src={currentMedia?.src}
+                  alt={currentMedia?.title}
+                  className="w-full h-full object-contain bg-black"
+                />
+              )}
               
               {/* Navigation Arrows */}
               <button
@@ -98,27 +159,34 @@ const GameGallery = () => {
                 <ArrowRight size={24} />
               </button>
               
-              {/* Image Counter */}
+              {/* Media Counter */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full">
-                {currentImage + 1} / {gameImages.length}
+                {currentImage + 1} / {allMedia.length}
               </div>
+
+              {/* Video Indicator */}
+              {currentMedia?.isVideo && (
+                <div className="absolute top-4 left-4 bg-cyan-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                  VIDEO
+                </div>
+              )}
             </div>
           </div>
           
-          {/* Image Info */}
+          {/* Media Info */}
           <div className="mt-6 text-center">
             <h3 className="text-2xl font-bold text-cyan-400 mb-2">
-              {gameImages[currentImage].title}
+              {currentMedia?.title}
             </h3>
             <p className="text-gray-300 text-lg">
-              {gameImages[currentImage].description}
+              {currentMedia?.description}
             </p>
           </div>
         </div>
 
         {/* Thumbnail Navigation */}
         <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
-          {gameImages.map((image, index) => (
+          {allMedia.map((media, index) => (
             <button
               key={index}
               onClick={() => setCurrentImage(index)}
@@ -128,17 +196,39 @@ const GameGallery = () => {
                   : 'opacity-70 hover:opacity-100'
               }`}
             >
-              <img
-                src={image.src}
-                alt={image.title}
-                className="w-full h-full object-cover"
-              />
+              {media.isVideo ? (
+                <div className="relative w-full h-full">
+                  <video
+                    src={media.src}
+                    className="w-full h-full object-cover"
+                    preload="metadata"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <Play size={16} className="text-white" />
+                  </div>
+                </div>
+              ) : (
+                <img
+                  src={media.src}
+                  alt={media.title}
+                  className="w-full h-full object-cover"
+                />
+              )}
               {currentImage === index && (
                 <div className="absolute inset-0 bg-cyan-400/20"></div>
               )}
             </button>
           ))}
         </div>
+
+        {/* Video Player Modal */}
+        {selectedVideo && (
+          <VideoPlayer
+            src={selectedVideo.src}
+            title={selectedVideo.title}
+            onClose={() => setSelectedVideo(null)}
+          />
+        )}
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
-
 import { useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AdminProvider } from "@/contexts/AdminContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -67,44 +67,46 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        
-        {/* Custom Alert Box */}
-        <div
-          id="custom-alert"
-          style={{
-            display: 'none',
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: '#fff5f5',
-            border: '2px solid #fecaca',
-            padding: '20px 30px',
-            borderRadius: '12px',
-            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
-            zIndex: 9999,
-            color: '#dc2626',
-            fontWeight: '600',
-            fontSize: '16px',
-            minWidth: '300px',
-            textAlign: 'center',
-          }}
-        >
-          ⚠️ ALERT: <br />
-          contact.huaifakhanmdrohid4004@gmail.com
-        </div>
+      <AdminProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          
+          {/* Custom Alert Box */}
+          <div
+            id="custom-alert"
+            style={{
+              display: 'none',
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              backgroundColor: '#fff5f5',
+              border: '2px solid #fecaca',
+              padding: '20px 30px',
+              borderRadius: '12px',
+              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
+              zIndex: 9999,
+              color: '#dc2626',
+              fontWeight: '600',
+              fontSize: '16px',
+              minWidth: '300px',
+              textAlign: 'center',
+            }}
+          >
+            ⚠️ ALERT: <br />
+            contact.huaifakhanmdrohid4004@gmail.com
+          </div>
 
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AdminProvider>
     </QueryClientProvider>
   );
 };
