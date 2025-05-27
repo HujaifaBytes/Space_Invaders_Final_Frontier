@@ -42,12 +42,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      const { data, error } = await supabase
-        .from('admins')
-        .select('*')
-        .eq('username', username)
-        .eq('password', password) // This line directly compares the plain text password
-        .single();
+      // From src/contexts/AdminContext.tsx
+          const { data, error } = await supabase
+            .from('admins')
+            .select('*')
+            .eq('username', username) // Must be an exact match for 'Hello'
+            .eq('password', password) // Must be an exact match for 'Jackson.com@312'
+            .single();
 
       if (error || !data) { // If error or no data, it means no exact match was found
         return false;
