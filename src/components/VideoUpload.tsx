@@ -17,47 +17,84 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleVideoUpload = async (file: File) => {
-    if (!adminData) return;
+    if (!adminData) {
+      setError('Admin authentication required');
+      return;
+    }
 
     setIsUploading(true);
     setUploadProgress(0);
+    setError(null);
 
     try {
+      // Validate file type
+      if (!file.type.startsWith('video/')) {
+        throw new Error('Please select a valid video file');
+      }
+
+      // Check file size (limit to 100MB)
+      const maxSize = 100 * 1024 * 1024; // 100MB
+      if (file.size > maxSize) {
+        throw new Error('Video file is too large. Maximum size is 100MB');
+      }
+
+      console.log('Starting video upload...', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+
       // Upload video to Supabase storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `videos/${fileName}`;
+      const filePath = `${fileName}`;
+
+      console.log('Uploading to path:', filePath);
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('videos')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
       if (uploadError) {
-        throw uploadError;
+        console.error('Upload error:', uploadError);
+        throw new Error(`Upload failed: ${uploadError.message}`);
       }
+
+      console.log('Upload successful:', uploadData);
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('videos')
         .getPublicUrl(filePath);
 
+      console.log('Public URL:', publicUrl);
+
       // Save video metadata to database
-      const { error: dbError } = await supabase
+      const { data: videoData, error: dbError } = await supabase
         .from('videos')
         .insert({
-          title: title || file.name,
-          description: description,
+          title: title || file.name.replace(/\.[^/.]+$/, ''),
+          description: description || null,
           file_path: publicUrl,
           file_size: file.size,
           mime_type: file.type,
           uploaded_by: adminData.id
-        });
+        })
+        .select()
+        .single();
 
       if (dbError) {
-        throw dbError;
+        console.error('Database error:', dbError);
+        throw new Error(`Database error: ${dbError.message}`);
       }
+
+      console.log('Video saved to database:', videoData);
 
       // Reset form
       setTitle('');
@@ -65,9 +102,11 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
       setShowForm(false);
       onVideoUploaded();
       
-    } catch (error) {
+      alert('Video uploaded successfully!');
+      
+    } catch (error: any) {
       console.error('Error uploading video:', error);
-      alert('Error uploading video. Please try again.');
+      setError(error.message || 'Error uploading video. Please try again.');
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
@@ -76,13 +115,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('video/')) {
-      if (!title) {
-        setTitle(file.name.replace(/\.[^/.]+$/, ''));
-      }
+    if (file) {
+      console.log('File selected:', file);
       handleVideoUpload(file);
-    } else {
-      alert('Please select a valid video file.');
     }
   };
 
@@ -103,7 +138,10 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold text-cyan-400">Upload Video</h3>
         <Button
-          onClick={() => setShowForm(false)}
+          onClick={() => {
+            setShowForm(false);
+            setError(null);
+          }}
           variant="ghost"
           size="sm"
           className="text-gray-400 hover:text-white"
@@ -111,6 +149,12 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
           <X size={16} />
         </Button>
       </div>
+      
+      {error && (
+        <div className="bg-red-900/50 border border-red-500/50 rounded-lg p-3 mb-4">
+          <p className="text-red-400 text-sm">{error}</p>
+        </div>
+      )}
       
       <div className="space-y-4">
         <div>
@@ -123,6 +167,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter video title"
             className="bg-gray-800 border-gray-700 text-white"
+            disabled={isUploading}
           />
         </div>
         
@@ -136,12 +181,13 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter video description"
             className="bg-gray-800 border-gray-700 text-white"
+            disabled={isUploading}
           />
         </div>
         
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Select Video File
+            Select Video File (Max 100MB)
           </label>
           <Input
             type="file"
@@ -154,12 +200,9 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
         
         {isUploading && (
           <div className="mt-4">
-            <div className="text-sm text-cyan-400 mb-2">Uploading...</div>
+            <div className="text-sm text-cyan-400 mb-2">Uploading video...</div>
             <div className="w-full bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-cyan-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${uploadProgress}%` }}
-              ></div>
+              <div className="bg-cyan-500 h-2 rounded-full animate-pulse"></div>
             </div>
           </div>
         )}

@@ -11,30 +11,23 @@ interface Particle {
 const CustomCursor = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [scrollOffset, setScrollOffset] = useState({ x: 0, y: 0 });
   const particleIdRef = useRef(0);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
+      // Use clientX and clientY for viewport-relative positioning
       const newPosition = { x: e.clientX, y: e.clientY };
       setMousePosition(newPosition);
 
-      // Create particle trail with scroll offset compensation
+      // Create particle trail at the exact cursor position
       const newParticle: Particle = {
         id: particleIdRef.current++,
-        x: newPosition.x + scrollOffset.x,
-        y: newPosition.y + scrollOffset.y,
+        x: e.clientX,
+        y: e.clientY,
         timestamp: Date.now(),
       };
 
       setParticles(prev => [...prev, newParticle]);
-    };
-
-    const handleScroll = () => {
-      setScrollOffset({
-        x: window.scrollX,
-        y: window.scrollY
-      });
     };
 
     // Clean up old particles
@@ -44,14 +37,12 @@ const CustomCursor = () => {
     }, 50);
 
     document.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('scroll', handleScroll);
       clearInterval(cleanupInterval);
     };
-  }, [scrollOffset]);
+  }, []);
 
   return (
     <>
@@ -70,8 +61,8 @@ const CustomCursor = () => {
           key={particle.id}
           className="cursor-trail-particle"
           style={{
-            left: particle.x - scrollOffset.x - 2,
-            top: particle.y - scrollOffset.y - 2,
+            left: particle.x - 2,
+            top: particle.y - 2,
           }}
         />
       ))}
