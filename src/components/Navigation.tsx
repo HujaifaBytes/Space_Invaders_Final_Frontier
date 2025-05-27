@@ -1,4 +1,4 @@
-
+// src/components/Navigation.tsx
 import React from 'react';
 import AdminLogin from './AdminLogin';
 
@@ -13,6 +13,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeSection, setActiveSection
     { id: 'team', label: 'Team' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'code', label: 'Code' },
++   { id: 'gamevideo', label: 'Game Video' }, // New Navigation Item
   ];
 
   return (
