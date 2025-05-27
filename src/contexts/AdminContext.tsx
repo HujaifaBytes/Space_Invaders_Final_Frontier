@@ -46,10 +46,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         .from('admins')
         .select('*')
         .eq('username', username)
-        .eq('password', password)
+        .eq('password', password) // This line directly compares the plain text password
         .single();
 
-      if (error || !data) {
+      if (error || !data) { // If error or no data, it means no exact match was found
         return false;
       }
 
@@ -62,16 +62,3 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
   };
-
-  const logout = () => {
-    setIsAdminLoggedIn(false);
-    setAdminData(null);
-    localStorage.removeItem('admin_session');
-  };
-
-  return (
-    <AdminContext.Provider value={{ isAdminLoggedIn, adminData, login, logout, loading }}>
-      {children}
-    </AdminContext.Provider>
-  );
-};
