@@ -13,7 +13,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeSection, setActiveSection
     { id: 'team', label: 'Team' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'code', label: 'Code' },
-    { id: 'gamevideo', label: 'Game Video' }, // New Navigation Item
+    { id: 'gamevideo', label: 'Game Video' }, 
   ];
 
   return (
@@ -44,7 +44,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeSection, setActiveSection
               ))}
             </div>
             
-            <AdminLogin />
+            <AdminLogin activeSection={activeSection} setActiveSection={setActiveSection} />
           </div>
         </div>
       </div>
