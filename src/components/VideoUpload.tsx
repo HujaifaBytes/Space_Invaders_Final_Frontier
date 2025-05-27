@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdmin } from '@/contexts/AdminContext';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, Check } from 'lucide-react';
 
 interface VideoUploadProps {
   onVideoUploaded: () => void;
@@ -13,11 +13,12 @@ interface VideoUploadProps {
 const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
   const { adminData } = useAdmin();
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadedVideo, setUploadedVideo] = useState<any>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   const handleVideoUpload = async (file: File) => {
     if (!adminData) {
@@ -26,7 +27,6 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
     }
 
     setIsUploading(true);
-    setUploadProgress(0);
     setError(null);
 
     try {
@@ -75,17 +75,40 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
 
       console.log('Public URL:', publicUrl);
 
+      // Store video data temporarily for publish
+      setUploadedVideo({
+        title: title || file.name.replace(/\.[^/.]+$/, ''),
+        description: description || null,
+        file_path: publicUrl,
+        file_size: file.size,
+        mime_type: file.type,
+        uploaded_by: adminData.id
+      });
+
+      console.log('Video uploaded successfully, ready to publish');
+      
+    } catch (error: any) {
+      console.error('Error uploading video:', error);
+      setError(error.message || 'Error uploading video. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!uploadedVideo) {
+      setError('No video to publish');
+      return;
+    }
+
+    setIsPublishing(true);
+    setError(null);
+
+    try {
       // Save video metadata to database
       const { data: videoData, error: dbError } = await supabase
         .from('videos')
-        .insert({
-          title: title || file.name.replace(/\.[^/.]+$/, ''),
-          description: description || null,
-          file_path: publicUrl,
-          file_size: file.size,
-          mime_type: file.type,
-          uploaded_by: adminData.id
-        })
+        .insert(uploadedVideo)
         .select()
         .single();
 
@@ -94,22 +117,22 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
         throw new Error(`Database error: ${dbError.message}`);
       }
 
-      console.log('Video saved to database:', videoData);
+      console.log('Video published to database:', videoData);
 
       // Reset form
       setTitle('');
       setDescription('');
       setShowForm(false);
+      setUploadedVideo(null);
       onVideoUploaded();
       
-      alert('Video uploaded successfully!');
+      alert('Video published successfully!');
       
     } catch (error: any) {
-      console.error('Error uploading video:', error);
-      setError(error.message || 'Error uploading video. Please try again.');
+      console.error('Error publishing video:', error);
+      setError(error.message || 'Error publishing video. Please try again.');
     } finally {
-      setIsUploading(false);
-      setUploadProgress(0);
+      setIsPublishing(false);
     }
   };
 
@@ -141,6 +164,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
           onClick={() => {
             setShowForm(false);
             setError(null);
+            setUploadedVideo(null);
           }}
           variant="ghost"
           size="sm"
@@ -155,6 +179,15 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       )}
+
+      {uploadedVideo && (
+        <div className="bg-green-900/50 border border-green-500/50 rounded-lg p-3 mb-4">
+          <p className="text-green-400 text-sm flex items-center">
+            <Check size={16} className="mr-2" />
+            Video uploaded successfully! Ready to publish.
+          </p>
+        </div>
+      )}
       
       <div className="space-y-4">
         <div>
@@ -167,7 +200,7 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter video title"
             className="bg-gray-800 border-gray-700 text-white"
-            disabled={isUploading}
+            disabled={isUploading || uploadedVideo}
           />
         </div>
         
@@ -181,22 +214,24 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter video description"
             className="bg-gray-800 border-gray-700 text-white"
-            disabled={isUploading}
+            disabled={isUploading || uploadedVideo}
           />
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Select Video File (Max 100MB)
-          </label>
-          <Input
-            type="file"
-            accept="video/*"
-            onChange={handleFileSelect}
-            disabled={isUploading}
-            className="bg-gray-800 border-gray-700 text-white file:bg-cyan-600 file:text-white file:border-0 file:rounded file:px-4 file:py-2"
-          />
-        </div>
+        {!uploadedVideo && (
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Select Video File (Max 100MB)
+            </label>
+            <Input
+              type="file"
+              accept="video/*"
+              onChange={handleFileSelect}
+              disabled={isUploading}
+              className="bg-gray-800 border-gray-700 text-white file:bg-cyan-600 file:text-white file:border-0 file:rounded file:px-4 file:py-2"
+            />
+          </div>
+        )}
         
         {isUploading && (
           <div className="mt-4">
@@ -204,6 +239,28 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
             <div className="w-full bg-gray-700 rounded-full h-2">
               <div className="bg-cyan-500 h-2 rounded-full animate-pulse"></div>
             </div>
+          </div>
+        )}
+
+        {uploadedVideo && (
+          <div className="mt-6">
+            <Button
+              onClick={handlePublish}
+              disabled={isPublishing}
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+            >
+              {isPublishing ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Publishing...
+                </>
+              ) : (
+                <>
+                  <Check size={16} className="mr-2" />
+                  Publish Video
+                </>
+              )}
+            </Button>
           </div>
         )}
       </div>

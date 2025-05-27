@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Play } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAdmin } from '@/contexts/AdminContext';
 import VideoUpload from './VideoUpload';
-import VideoPlayer from './VideoPlayer';
+import EnhancedVideoPlayer from './EnhancedVideoPlayer';
 
 const GameGallery = () => {
   const { isAdminLoggedIn } = useAdmin();
@@ -131,10 +131,13 @@ const GameGallery = () => {
                     onClick={() => setSelectedVideo(currentMedia)}
                     className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all duration-300 group"
                   >
-                    <div className="bg-cyan-500 rounded-full p-4 group-hover:scale-110 transition-transform duration-300">
-                      <Play size={32} className="text-white ml-1" />
+                    <div className="bg-cyan-500 rounded-full p-6 group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+                      <Play size={40} className="text-white ml-1" />
                     </div>
                   </button>
+                  <div className="absolute bottom-4 right-4 bg-cyan-500/90 text-white px-3 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+                    HD VIDEO
+                  </div>
                 </div>
               ) : (
                 <img
@@ -221,9 +224,9 @@ const GameGallery = () => {
           ))}
         </div>
 
-        {/* Video Player Modal */}
+        {/* Enhanced Video Player Modal */}
         {selectedVideo && (
-          <VideoPlayer
+          <EnhancedVideoPlayer
             src={selectedVideo.src}
             title={selectedVideo.title}
             onClose={() => setSelectedVideo(null)}
