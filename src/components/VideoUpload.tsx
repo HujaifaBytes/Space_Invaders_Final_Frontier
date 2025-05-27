@@ -95,46 +95,60 @@ const VideoUpload: React.FC<VideoUploadProps> = ({ onVideoUploaded }) => {
     }
   };
 
-  const handlePublish = async () => {
-    if (!uploadedVideo) {
-      setError('No video to publish');
-      return;
+// src/components/VideoUpload.tsx
+// ... (other imports and code)
+
+const handlePublish = async () => {
+  if (!uploadedVideo) {
+    setError('No video to publish');
+    return;
+  }
+
+  setIsPublishing(true);
+  setError(null);
+
+  try {
+    // Save video metadata to database
+    console.log('Attempting to insert video metadata:', uploadedVideo); // Log data being inserted
+    const { data: videoData, error: dbError } = await supabase
+      .from('videos')
+      .insert(uploadedVideo)
+      .select()
+      .single();
+
+    if (dbError) {
+      // DETAILED LOGGING FOR DATABASE ERROR
+      console.error(
+        'Database insert error:', 
+        dbError.message, 
+        `Details: ${dbError.details}`, 
+        `Hint: ${dbError.hint}`, 
+        `Code: ${dbError.code}`
+      );
+      throw new Error(`Database error: ${dbError.message} (Code: ${dbError.code})`);
     }
 
-    setIsPublishing(true);
-    setError(null);
+    console.log('Video published to database:', videoData);
 
-    try {
-      // Save video metadata to database
-      const { data: videoData, error: dbError } = await supabase
-        .from('videos')
-        .insert(uploadedVideo)
-        .select()
-        .single();
+    // Reset form
+    setTitle('');
+    setDescription('');
+    setShowForm(false);
+    setUploadedVideo(null);
+    onVideoUploaded();
 
-      if (dbError) {
-        console.error('Database error:', dbError);
-        throw new Error(`Database error: ${dbError.message}`);
-      }
+    alert('Video published successfully!');
 
-      console.log('Video published to database:', videoData);
+  } catch (error: any) {
+    console.error('Error publishing video (outer catch):', error);
+    // Ensure the full error object is logged if possible, not just error.message
+    setError(error.message || 'Error publishing video. Please try again.');
+  } finally {
+    setIsPublishing(false);
+  }
+};
 
-      // Reset form
-      setTitle('');
-      setDescription('');
-      setShowForm(false);
-      setUploadedVideo(null);
-      onVideoUploaded();
-      
-      alert('Video published successfully!');
-      
-    } catch (error: any) {
-      console.error('Error publishing video:', error);
-      setError(error.message || 'Error publishing video. Please try again.');
-    } finally {
-      setIsPublishing(false);
-    }
-  };
+// ... (rest of the component)
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
