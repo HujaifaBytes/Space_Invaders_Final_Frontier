@@ -1,8 +1,14 @@
+// src/Home.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Trophy, Target, Zap, BarChart3, FileSpreadsheet, Rocket, Shield, Gamepad2 } from 'lucide-react';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { 
+  Play, Trophy, Target, Zap, BarChart3, FileSpreadsheet, Rocket, Shield, Gamepad2,
+  Lightbulb, Users, Smartphone, TrendingUp, Briefcase, DollarSign, AlertTriangle,
+  Mail, Phone, MessageSquare, Sparkles, Brain, BookOpen, LineChart as LineChartIcon
+} from 'lucide-react';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from './components/ui/chart'; // Assuming ./components/ui/chart
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, Legend, CartesianGrid } from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './components/ui/table'; // Assuming ./components/ui/table
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './components/ui/card'; // Assuming ./components/ui/card
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -26,15 +32,13 @@ const Home = () => {
       const rect = robot.getBoundingClientRect();
       const robotCenterX = rect.left + rect.width / 2;
       const robotCenterY = rect.top + rect.height / 2;
-      
       const angle = Math.atan2(mousePosition.y - robotCenterY, mousePosition.x - robotCenterX);
       const rotation = (angle * 180) / Math.PI;
-      
       robot.style.transform = `rotate(${rotation + 90}deg)`;
     }
   }, [mousePosition]);
 
-  // Chart data
+  // Chart data (existing)
   const difficultyData = [
     { level: 'Easy', enemies: 10, speed: 2, score: 100 },
     { level: 'Medium', enemies: 15, speed: 3, score: 200 },
@@ -57,7 +61,7 @@ const Home = () => {
     { name: 'Bonus', value: 8, color: '#9d4edd' }
   ];
 
-  // Excel demo data
+  // Excel demo data (existing)
   const playerStatsData = [
     { player: 'Player 1', score: 15420, level: 8, accuracy: '94%', time: '3:45', date: '2024-01-15' },
     { player: 'Player 2', score: 12350, level: 6, accuracy: '87%', time: '4:12', date: '2024-01-14' },
@@ -66,13 +70,103 @@ const Home = () => {
     { player: 'Player 5', score: 21200, level: 12, accuracy: '98%', time: '3:15', date: '2024-01-11' }
   ];
 
+  // New Market Data for Analytics Tab
+  const marketGrowthData = [
+    { year: '2024', value: 23.99, label: '$23.99B' },
+    { year: '2025', value: 30.17, label: '$30.17B' },
+    // Assuming linear interpolation for a few more points for better visualization up to 2028
+    { year: '2026', value: 37.93, label: '$37.93B (est.)' }, // CAGR applied
+    { year: '2027', value: 47.70, label: '$47.70B (est.)' }, // CAGR applied
+    { year: '2028', value: 59.99, label: '$59.99B (est.)' }, // CAGR applied
+    { year: '2033', value: 188.53, label: '$188.53B' }
+  ]; //
+  const marketCAGR = "25.74%"; //
+
+  const keyTrends = [
+    { title: "Gamification in Learning", description: "Turning education into a fun, engaging experience with rewards and challenges.", icon: Gamepad2, color: "text-cyan-400" },
+    { title: "AI-Powered Learning", description: "AI-driven adaptive learning and personalized education are becoming more popular.", icon: Brain, color: "text-purple-400" },
+    { title: "Mobile & Online Learning", description: "More students are using smartphones and tablets for education, increasing accessibility.", icon: Smartphone, color: "text-green-400" },
+    { title: "EdTech Partnerships", description: "Schools and universities are integrating educational games into their curriculum.", icon: Users, color: "text-orange-400" }
+  ]; //
+
+  const revenueOpportunities = [
+    { title: "Freemium Model", description: "Offer a free version with paid upgrades for advanced learning features.", icon: Shield, color: "text-cyan-400" },
+    { title: "Subscription-Based Learning", description: "Monthly or yearly plans for exclusive AI-driven coding lessons.", icon: DollarSign, color: "text-purple-400" },
+    { title: "Institutional Collaborations", description: "Partner with schools and EdTech platforms for bulk licensing.", icon: Briefcase, color: "text-green-400" },
+    { title: "In-App Purchases", description: "Sell new coding challenges, AI modules, and game skins.", icon: Zap, color: "text-orange-400" },
+    { title: "Sponsorships & Brand Deals", description: "Collaborate with tech companies to support AI education.", icon: Sparkles, color: "text-pink-400" }
+  ]; //
+
+  const marketChallenges = [
+    { title: "Competition", description: "The market is growing, but standing out requires unique features and strong branding.", icon: Target, color: "text-red-400" },
+    { title: "User Engagement", description: "Keeping kids motivated to learn while playing is crucial.", icon: TrendingUp, color: "text-yellow-400" },
+    { title: "Monetization Balance", description: "Ensuring affordability while generating revenue.", icon: AlertTriangle, color: "text-orange-400" }
+  ]; //
+
+
+  const VisionSection = () => (
+    <div className="my-16 text-left max-w-4xl mx-auto">
+      <h2 className="text-4xl font-bold text-cyan-400 mb-4 text-center">
+        Coding the Future, One Game at a Time
+      </h2>
+      <p className="text-2xl text-gray-300 mb-10 text-center italic">
+        The Vision for Space Invaders: Final Frontier
+      </p>
+      
+      <div className="grid md:grid-cols-2 gap-8 items-center mb-12">
+        <div>
+          <img 
+            src="/placeholder_vision_image.jpg" // Replace with actual path to your image in public folder
+            alt="Space Invaders: Final Frontier Vision" 
+            className="rounded-xl shadow-2xl border-2 border-cyan-500/50 hover:scale-105 transition-transform duration-300"
+          />
+          <p className="text-xs text-gray-400 mt-2 text-center">A visual representation of learning and play.</p>
+        </div>
+        <div className="space-y-6 text-gray-200 text-lg leading-relaxed">
+          <p>Ladies and gentlemen, today I stand before you with a vision—one that merges education with entertainment, where young minds don’t just play, but learn, create, and innovate.</p>
+          <p>We envision <strong className="text-cyan-300">Space Invaders: Final Frontier</strong> as more than just a game. It will be a pioneering platform that transforms coding, artificial intelligence, and STEM concepts into an immersive adventure. Through AI-driven challenges and interactive lessons, children will explore the digital universe, unlocking their creativity while developing essential problem-solving skills.</p>
+        </div>
+      </div>
+
+      <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-purple-500/30 mb-12 hover:scale-[1.02] transition-transform duration-300">
+        <h3 className="text-3xl font-semibold text-purple-400 mb-4 flex items-center">
+          <Brain className="w-10 h-10 mr-3" /> Empowering Young Minds Through AI & Play
+        </h3>
+        <p className="text-gray-300 text-lg leading-relaxed">
+          Our approach is simple: make learning fun. By integrating AI-powered analysis questions, we encourage children to think critically, solve problems, and develop a deep understanding of coding and artificial intelligence. With adaptive learning mechanics, real-time feedback, and gamified experiences, every challenge will feel less like schoolwork and more like an exciting quest.
+        </p>
+      </div>
+
+      <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-green-500/30 mb-12 hover:scale-[1.02] transition-transform duration-300">
+        <h3 className="text-3xl font-semibold text-green-400 mb-4 flex items-center">
+          <Rocket className="w-10 h-10 mr-3" /> From Players to Programmers—Shaping the Next Generation
+        </h3>
+        <p className="text-gray-300 text-lg leading-relaxed">
+          Our mission goes beyond entertainment. We are preparing children for the future, nurturing curiosity and innovation as they embark on thrilling adventures within the universe of Space Invaders. This game is where imagination meets innovation, where young learners transform into future creators, programmers, and AI pioneers.
+        </p>
+      </div>
+      
+      <div className="bg-white/5 backdrop-blur-sm rounded-xl p-8 border border-yellow-500/30 hover:scale-[1.02] transition-transform duration-300">
+         <h3 className="text-3xl font-semibold text-yellow-400 mb-4 flex items-center">
+          <DollarSign className="w-10 h-10 mr-3" /> Sustainable Growth & Accessibility
+        </h3>
+        <p className="text-gray-300 text-lg leading-relaxed mb-4">
+          But a vision like this must be sustainable. To ensure growth and accessibility, we have developed a strategic model for revenue generation. By offering premium features, subscriptions for advanced lessons, and partnerships with schools and EdTech platforms, we will create a self-sustaining educational experience. Sponsorships, merchandise, and interactive coding kits will further fuel this mission.
+        </p>
+        <p className="text-gray-200 text-xl font-semibold">
+          This is not just a game. It’s a movement—a revolution in learning. With Space Invaders: Final Frontier, we are turning play into knowledge, one challenge at a time, ensuring that every child has the tools to unlock the digital universe and code their future.
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="pt-24 pb-12 px-6 relative">
       {/* 3D Robot */}
       <div className="fixed top-1/2 right-10 z-30 pointer-events-none">
         <div 
           ref={robotRef}
-          className="robot-container transition-transform duration-200 ease-out"
+          className="robot-container relative transition-transform duration-200 ease-out"
           style={{ transformOrigin: 'center center' }}
         >
           {/* Robot Head */}
@@ -110,19 +204,19 @@ const Home = () => {
           </p>
           
           {/* Tab Navigation */}
-          <div className="flex justify-center space-x-4 mb-12">
+          <div className="flex justify-center space-x-2 md:space-x-4 mb-12 flex-wrap">
             {[
-              { id: 'overview', label: 'Overview', icon: Rocket },
+              { id: 'overview', label: 'Overview & Vision', icon: Rocket },
+              { id: 'analytics', label: 'Market & Strategy', icon: LineChartIcon },
               { id: 'journey', label: 'Player Journey', icon: Gamepad2 },
-              { id: 'analytics', label: 'Analytics', icon: BarChart3 },
               { id: 'excel', label: 'Excel Demo', icon: FileSpreadsheet }
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 ${
+                className={`flex items-center space-x-2 px-4 py-2 md:px-6 md:py-3 rounded-lg transition-all duration-300 hover:scale-105 text-sm md:text-base my-1 ${
                   activeTab === id 
-                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' 
+                    ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 shadow-lg shadow-cyan-400/30' 
                     : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-transparent'
                 }`}
               >
@@ -136,6 +230,8 @@ const Home = () => {
         {/* Content Sections */}
         {activeTab === 'overview' && (
           <div className="space-y-16">
+            <VisionSection /> {/* Displaying the new vision section */}
+            
             {/* 3D Space Elements */}
             <div className="relative mb-16">
               <div className="floating-spaceship">
@@ -355,105 +451,136 @@ const Home = () => {
         {activeTab === 'analytics' && (
           <div className="space-y-16">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-cyan-400 mb-6">Game Analytics & Performance</h2>
+              <h2 className="text-4xl font-bold text-cyan-400 mb-6">Market Insights & Project Potential</h2>
               <p className="text-xl text-gray-300 max-w-4xl mx-auto">
-                Advanced data visualization and performance metrics for comprehensive game analysis
+                The educational games market shows significant growth, presenting exciting opportunities.
               </p>
             </div>
 
-            {/* Charts Grid */}
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Difficulty Progression Chart */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-cyan-500/30 hover:scale-105 transition-all duration-300">
-                <h3 className="text-xl font-bold text-white mb-4">Difficulty Progression</h3>
-                <ChartContainer config={{
-                  enemies: { label: "Enemies", color: "#00ffff" },
-                  speed: { label: "Speed", color: "#ff6b7a" },
-                  score: { label: "Score Multiplier", color: "#ffd700" }
-                }}>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={difficultyData}>
-                      <XAxis dataKey="level" stroke="#94a3b8" />
-                      <YAxis stroke="#94a3b8" />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Bar dataKey="enemies" fill="#00ffff" />
-                      <Bar dataKey="speed" fill="#ff6b7a" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </div>
+            {/* Market Growth Chart */}
+            <Card className="bg-white/5 backdrop-blur-sm border-cyan-500/30 hover:scale-[1.02] transition-all duration-300">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-cyan-400">Global Educational Games Market Growth</CardTitle>
+                <CardDescription className="text-gray-300">Projected growth from 2024 to 2033. (CAGR: {marketCAGR})</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={marketGrowthData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                    <XAxis dataKey="year" stroke="#94a3b8" />
+                    <YAxis stroke="#94a3b8" unit="B" label={{ value: 'Market Value (Billion USD)', angle: -90, position: 'insideLeft', fill: '#94a3b8' }} />
+                    <ChartTooltip 
+                       contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid #00ffff', borderRadius: '8px' }}
+                       labelStyle={{ color: '#00ffff', fontWeight: 'bold' }}
+                       itemStyle={{ color: '#ffffff' }}
+                       formatter={(value, name, props) => [`$${value} Billion`, `Market Value`]}
+                    />
+                    <Legend wrapperStyle={{ color: '#e0e0e0' }} />
+                    <Bar dataKey="value" name="Market Value (Billion USD)" fill="url(#colorMarketValue)" radius={[4, 4, 0, 0]} />
+                     <defs>
+                      <linearGradient id="colorMarketValue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#00ffff" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#0080ff" stopOpacity={0.8}/>
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+            
+            {/* Key Trends, Revenue Opportunities, Challenges */}
+             <div className="grid lg:grid-cols-3 gap-8 mt-12">
+              <Card className="bg-white/5 backdrop-blur-sm border-purple-500/30 hover:scale-[1.02] transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-purple-400 flex items-center"><TrendingUp className="mr-2"/>Key Market Trends</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {keyTrends.map(item => (
+                    <div key={item.title} className="flex items-start space-x-3">
+                      <item.icon className={`w-6 h-6 ${item.color} mt-1 shrink-0`} />
+                      <div>
+                        <h4 className="font-semibold text-white">{item.title}</h4>
+                        <p className="text-sm text-gray-300">{item.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
 
-              {/* Performance Trends */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30 hover:scale-105 transition-all duration-300">
-                <h3 className="text-xl font-bold text-white mb-4">Performance Trends</h3>
-                <ChartContainer config={{
-                  score: { label: "Score", color: "#9d4edd" },
-                  accuracy: { label: "Accuracy %", color: "#00ffff" }
-                }}>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={performanceData}>
-                      <XAxis dataKey="session" stroke="#94a3b8" />
-                      <YAxis stroke="#94a3b8" />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Line type="monotone" dataKey="score" stroke="#9d4edd" strokeWidth={3} />
-                      <Line type="monotone" dataKey="accuracy" stroke="#00ffff" strokeWidth={3} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </div>
+              <Card className="bg-white/5 backdrop-blur-sm border-green-500/30 hover:scale-[1.02] transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-green-400 flex items-center"><DollarSign className="mr-2"/>Strategic Revenue Streams</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {revenueOpportunities.map(item => (
+                     <div key={item.title} className="flex items-start space-x-3">
+                      <item.icon className={`w-6 h-6 ${item.color} mt-1 shrink-0`} />
+                      <div>
+                        <h4 className="font-semibold text-white">{item.title}</h4>
+                        <p className="text-sm text-gray-300">{item.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
 
-              {/* Game Statistics Pie Chart */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-orange-500/30 hover:scale-105 transition-all duration-300">
-                <h3 className="text-xl font-bold text-white mb-4">Game Statistics</h3>
-                <ChartContainer config={{
-                  hits: { label: "Hits", color: "#00ffff" },
-                  misses: { label: "Misses", color: "#ff6b7a" },
-                  powerups: { label: "Power-ups", color: "#ffd700" },
-                  bonus: { label: "Bonus", color: "#9d4edd" }
-                }}>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={gameStatsData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={100}
-                        label={({ name, value }) => `${name}: ${value}`}
-                      >
-                        {gameStatsData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </div>
+              <Card className="bg-white/5 backdrop-blur-sm border-orange-500/30 hover:scale-[1.02] transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-orange-400 flex items-center"><AlertTriangle className="mr-2"/>Addressing Market Challenges</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {marketChallenges.map(item => (
+                    <div key={item.title} className="flex items-start space-x-3">
+                      <item.icon className={`w-6 h-6 ${item.color} mt-1 shrink-0`} />
+                      <div>
+                        <h4 className="font-semibold text-white">{item.title}</h4>
+                        <p className="text-sm text-gray-300">{item.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
 
-              {/* Real-time Metrics */}
-              <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-green-500/30 hover:scale-105 transition-all duration-300">
-                <h3 className="text-xl font-bold text-white mb-4">Real-time Metrics</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-cyan-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
-                    <div className="text-3xl font-bold text-cyan-400">15,420</div>
-                    <div className="text-sm text-gray-300">Highest Score</div>
-                  </div>
-                  <div className="bg-purple-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
-                    <div className="text-3xl font-bold text-purple-400">96%</div>
-                    <div className="text-sm text-gray-300">Best Accuracy</div>
-                  </div>
-                  <div className="bg-orange-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
-                    <div className="text-3xl font-bold text-orange-400">12</div>
-                    <div className="text-sm text-gray-300">Max Level</div>
-                  </div>
-                  <div className="bg-green-500/10 rounded-lg p-4 text-center hover:scale-105 transition-all duration-300">
-                    <div className="text-3xl font-bold text-green-400">3:15</div>
-                    <div className="text-sm text-gray-300">Best Time</div>
-                  </div>
+            {/* Existing Charts Grid (if any, or can be removed/merged) */}
+            <div className="grid lg:grid-cols-2 gap-8 mt-12">
+                {/* Difficulty Progression Chart (Existing) */}
+                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-cyan-500/30 hover:scale-105 transition-all duration-300">
+                  <h3 className="text-xl font-bold text-white mb-4">Difficulty Progression</h3>
+                   <ChartContainer config={{
+                    enemies: { label: "Enemies", color: "#00ffff" },
+                    speed: { label: "Speed", color: "#ff6b7a" },
+                  }}>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={difficultyData}>
+                        <XAxis dataKey="level" stroke="#94a3b8" />
+                        <YAxis stroke="#94a3b8" />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Bar dataKey="enemies" fill="var(--color-enemies)" />
+                        <Bar dataKey="speed" fill="var(--color-speed)" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
                 </div>
-              </div>
+
+                {/* Performance Trends (Existing) */}
+                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-purple-500/30 hover:scale-105 transition-all duration-300">
+                  <h3 className="text-xl font-bold text-white mb-4">Performance Trends</h3>
+                  <ChartContainer config={{
+                    score: { label: "Score", color: "#9d4edd" },
+                    accuracy: { label: "Accuracy %", color: "#00ffff" }
+                  }}>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart data={performanceData}>
+                        <XAxis dataKey="session" stroke="#94a3b8" />
+                        <YAxis stroke="#94a3b8" />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Line type="monotone" dataKey="score" stroke="var(--color-score)" strokeWidth={3} />
+                        <Line type="monotone" dataKey="accuracy" stroke="var(--color-accuracy)" strokeWidth={3} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                </div>
             </div>
           </div>
         )}
@@ -557,6 +684,105 @@ const Home = () => {
           </div>
         )}
       </div>
+      
+      {/* New Contact Section */}
+      <div className="mt-20 container mx-auto max-w-4xl">
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-purple-500/30 p-8 shadow-lg">
+          <h2 className="text-4xl font-bold text-center text-white mb-6 tracking-wider">
+            Connect with <span className="text-purple-400">TragicBytes</span>
+          </h2>
+          <div className="flex flex-col md:flex-row justify-around items-center gap-6 text-gray-200 text-lg">
+            <a href="mailto:hujaifakhanmdrohid4004@gmail.com" className="flex items-center space-x-2 hover:text-purple-300 transition-colors">
+              <Mail /> <span>hujaifakhanmdrohid4004@gmail.com</span>
+            </a>
+            <a href="tel:+8801730903744" className="flex items-center space-x-2 hover:text-purple-300 transition-colors">
+              <Phone /> <span>+8801730903744</span>
+            </a>
+            <a 
+              href="https://wa.me/8801730903744" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="flex items-center space-x-2 bg-green-500/20 hover:bg-green-500/40 text-green-300 hover:text-green-200 px-4 py-2 rounded-lg transition-colors border border-green-500/50"
+            >
+              <MessageSquare /> <span>WhatsApp Us</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      {/* Game Video Section */}
+      <div className="mt-20 container mx-auto max-w-4xl">
+        <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-cyan-500/30 p-8 shadow-lg">
+          <h2 className="text-4xl font-bold text-center text-white mb-4 tracking-wider">
+            Game <span className="text-cyan-400">Video</span>
+          </h2>
+          <p className="text-center text-gray-300 mb-8 text-lg">
+            Watch a gameplay video demonstration below!
+          </p>
+          <div className="aspect-video rounded-lg overflow-hidden border border-cyan-400 shadow-lg bg-black flex items-center justify-center">
+            <iframe
+              src="https://drive.google.com/file/d/1yCJhU97OKW-MVCAEpBdcCmkxdvD52neE/preview"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+              className="w-full h-full"
+              title="Game Video"
+            ></iframe>
+          </div>
+          <div className="text-center mt-4">
+            <a
+              href="https://photos.app.goo.gl/HnXFhH4zVFEvBiTF6"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-2 text-cyan-400 hover:underline"
+            >
+              Or watch on Google Photos
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="mt-24">
+        <div className="max-w-5xl mx-auto px-6 py-10 rounded-2xl bg-gradient-to-br from-cyan-900/70 via-blue-900/60 to-cyan-800/80 shadow-2xl border border-cyan-400/20 backdrop-blur-md">
+          <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
+            {/* Contact Info (Footer - already exists but we added one specific for TragicBytes above) */}
+            <div>
+              <h3 className="text-2xl font-bold text-cyan-400 mb-2">Contact</h3>
+              <p className="text-gray-300 flex items-center gap-2">
+                <span className="font-semibold">Email:</span>
+                <a href="mailto:hujaifakhanmdrohid4004@gmail.com" className="hover:underline text-cyan-300">
+                  hujaifakhanmdrohid4004@gmail.com
+                </a>
+              </p>
+              <p className="text-gray-300 flex items-center gap-2 mt-1">
+                <span className="font-semibold">Mobile:</span>
+                <a href="tel:+8801730903744" className="hover:underline text-cyan-300">
+                  +8801730903744
+                </a>
+              </p>
+            </div>
+            {/* GitHub Link */}
+            <div className="flex flex-col items-center">
+              <h3 className="text-2xl font-bold text-cyan-400 mb-2">Project Repository</h3>
+              <a
+                href="https://github.com/HujaifaBytes/Space_Invaders_Final_Frontier"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-cyan-700/30 hover:bg-cyan-600/40 rounded-lg shadow-lg transition-all duration-300 border border-cyan-400/30"
+              >
+                <svg width="24" height="24" fill="currentColor" className="text-white">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.338 4.695-4.566 4.944.36.31.68.921.68 1.857 0 1.34-.012 2.422-.012 2.753 0 .268.18.579.688.481C19.138 20.203 22 16.447 22 12.021 22 6.484 17.523 2 12 2z"/>
+                </svg>
+                <span className="text-white font-semibold">GitHub</span>
+              </a>
+            </div>
+          </div>
+          <div className="mt-8 border-t border-cyan-400/20 pt-4 text-center text-gray-400 text-sm">
+            &copy; {new Date().getFullYear()} Space Invaders: Final Frontier by TragicBytes. All rights reserved.
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
