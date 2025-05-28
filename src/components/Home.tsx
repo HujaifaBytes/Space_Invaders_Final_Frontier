@@ -26,8 +26,10 @@ const Home = () => {
       const rect = robot.getBoundingClientRect();
       const robotCenterX = rect.left + rect.width / 2;
       const robotCenterY = rect.top + rect.height / 2;
+      
       const angle = Math.atan2(mousePosition.y - robotCenterY, mousePosition.x - robotCenterX);
       const rotation = (angle * 180) / Math.PI;
+      
       robot.style.transform = `rotate(${rotation + 90}deg)`;
     }
   }, [mousePosition]);
@@ -70,7 +72,7 @@ const Home = () => {
       <div className="fixed top-1/2 right-10 z-30 pointer-events-none">
         <div 
           ref={robotRef}
-          className="robot-container relative transition-transform duration-200 ease-out"
+          className="robot-container transition-transform duration-200 ease-out"
           style={{ transformOrigin: 'center center' }}
         >
           {/* Robot Head */}
@@ -555,79 +557,6 @@ const Home = () => {
           </div>
         )}
       </div>
-
-      {/* Game Video Section */}
-      <div className="mt-20 container mx-auto max-w-4xl">
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-cyan-500/30 p-8 shadow-lg">
-          <h2 className="text-4xl font-bold text-center text-white mb-4 tracking-wider">
-            Game <span className="text-cyan-400">Video</span>
-          </h2>
-          <p className="text-center text-gray-300 mb-8 text-lg">
-            Watch a gameplay video demonstration below!
-          </p>
-          <div className="aspect-video rounded-lg overflow-hidden border border-cyan-400 shadow-lg bg-black flex items-center justify-center">
-            <iframe
-              src="https://drive.google.com/file/d/1yCJhU97OKW-MVCAEpBdcCmkxdvD52neE/preview"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-              className="w-full h-full"
-              title="Game Video"
-            ></iframe>
-          </div>
-          <div className="text-center mt-4">
-            <a
-              href="https://photos.app.goo.gl/HnXFhH4zVFEvBiTF6"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-2 text-cyan-400 hover:underline"
-            >
-              Or watch on Google Photos
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="mt-24">
-        <div className="max-w-5xl mx-auto px-6 py-10 rounded-2xl bg-gradient-to-br from-cyan-900/70 via-blue-900/60 to-cyan-800/80 shadow-2xl border border-cyan-400/20 backdrop-blur-md">
-          <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
-            {/* Contact Info */}
-            <div>
-              <h3 className="text-2xl font-bold text-cyan-400 mb-2">Contact</h3>
-              <p className="text-gray-300 flex items-center gap-2">
-                <span className="font-semibold">Email:</span>
-                <a href="mailto:hujaifakhanmdrohid4004@gmail.com" className="hover:underline text-cyan-300">
-                  hujaifakhanmdrohid4004@gmail.com
-                </a>
-              </p>
-              <p className="text-gray-300 flex items-center gap-2 mt-1">
-                <span className="font-semibold">Mobile:</span>
-                <a href="tel:+8801730903744" className="hover:underline text-cyan-300">
-                  +8801730903744
-                </a>
-              </p>
-            </div>
-            {/* GitHub Link */}
-            <div className="flex flex-col items-center">
-              <h3 className="text-2xl font-bold text-cyan-400 mb-2">Project Repository</h3>
-              <a
-                href="https://github.com/HujaifaBytes/Space_Invaders_Final_Frontier"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-4 py-2 bg-cyan-700/30 hover:bg-cyan-600/40 rounded-lg shadow-lg transition-all duration-300 border border-cyan-400/30"
-              >
-                <svg width="24" height="24" fill="currentColor" className="text-white">
-                  <path d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.338 4.695-4.566 4.944.36.31.68.921.68 1.857 0 1.34-.012 2.422-.012 2.753 0 .268.18.579.688.481C19.138 20.203 22 16.447 22 12.021 22 6.484 17.523 2 12 2z"/>
-                </svg>
-                <span className="text-white font-semibold">GitHub</span>
-              </a>
-            </div>
-          </div>
-          <div className="mt-8 border-t border-cyan-400/20 pt-4 text-center text-gray-400 text-sm">
-            &copy; {new Date().getFullYear()} Space Invaders: Final Frontier. All rights reserved.
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };
