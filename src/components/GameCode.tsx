@@ -305,7 +305,7 @@ def pause_screen():
     if sound_enabled: mixer.music.unpause()`
     },
     {
-      name: "Hujaifa Khan 2",
+      name: "Hujaifa Khan",
       title: "Main Game Loop & Core Mechanics",
       code: `def game_loop():
     global player_x_change, player_y_change, bullet_state, score_value, lives, danger_level, is_paused, game_session_active
