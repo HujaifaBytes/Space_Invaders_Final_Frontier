@@ -3,6 +3,9 @@ import { Play, Trophy, Target, Zap, BarChart3, FileSpreadsheet, Rocket, Shield, 
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import VisionSection from './VisionSection';
+import MarketAnalytics from './MarketAnalytics';
+import ContactSection from './ContactSection';
 
 const Home = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -113,8 +116,10 @@ const Home = () => {
           <div className="flex justify-center space-x-4 mb-12">
             {[
               { id: 'overview', label: 'Overview', icon: Rocket },
+              { id: 'vision', label: 'Future Vision', icon: Target },
+              { id: 'market', label: 'Market Analytics', icon: BarChart3 },
               { id: 'journey', label: 'Player Journey', icon: Gamepad2 },
-              { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+              { id: 'analytics', label: 'Game Analytics', icon: BarChart3 },
               { id: 'excel', label: 'Excel Demo', icon: FileSpreadsheet }
             ].map(({ id, label, icon: Icon }) => (
               <button
@@ -127,7 +132,7 @@ const Home = () => {
                 }`}
               >
                 <Icon size={20} />
-                <span>{label}</span>
+                <span className="hidden md:block">{label}</span>
               </button>
             ))}
           </div>
@@ -267,6 +272,10 @@ const Home = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'vision' && <VisionSection />}
+
+        {activeTab === 'market' && <MarketAnalytics />}
 
         {activeTab === 'journey' && (
           <div className="space-y-16">
@@ -556,6 +565,11 @@ const Home = () => {
             </div>
           </div>
         )}
+
+        {/* Contact Section - Always visible at bottom */}
+        <div className="mt-24">
+          <ContactSection />
+        </div>
       </div>
     </div>
   );
