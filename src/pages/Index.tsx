@@ -28,8 +28,10 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 relative overflow-hidden">
-      {/* Custom Cursor Component */}
-      <CustomCursor />
+      {/* Custom Cursor Component - Hide on mobile */}
+      <div className="hidden md:block">
+        <CustomCursor />
+      </div>
       
       {/* Animated space background */}
       <div className="absolute inset-0 overflow-hidden">
