@@ -10,6 +10,7 @@ const TeamMembers = () => {
       intake: "54",
       university: "BUBT",
       role: "Project Lead & Core Developer",
+      Email: "hujaifakhanmdrohid4004@gmail.com"
       contributions: "Game initialization, asset management, main game loop",
       avatar: "🚀",
       photo: "/lovable-uploads/f1c80e69-b8e2-43cd-87a1-8723f73af1cf.png"
