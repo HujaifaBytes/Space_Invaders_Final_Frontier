@@ -88,10 +88,7 @@ const TeamMembers = () => {
                     <img
                       src={member.photo}
                       alt={member.name}
-                      className="w-full h-full rounded-full object-cover border-4 border-gradient-to-br from-cyan-400 to-purple-500 shadow-lg"
-                      style={{
-                        borderImage: 'linear-gradient(135deg, #00ffff, #8b5cf6) 1'
-                      }}
+                      className="w-full h-full rounded-full object-cover shadow-lg shadow-cyan-400/30"
                     />
                     <div className="absolute -bottom-2 -right-2 w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-cyan-400 to-purple-500 rounded-full flex items-center justify-center text-lg sm:text-xl border-2 border-gray-900">
                       {member.avatar}
